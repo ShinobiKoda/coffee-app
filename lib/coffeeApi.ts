@@ -11,7 +11,7 @@ export interface Coffee {
   image_url: string;
 }
 
-export const getAllCoffees = async () => {
+export const fetchAllCoffees = async () => {
   try {
     const { data, error } = await supabase
       .from("coffee_details")
@@ -26,7 +26,7 @@ export const getAllCoffees = async () => {
   }
 };
 
-export const getCoffeeById = async (id: number) => {
+export const fetchCoffeeById = async (id: number) => {
   try {
     const { data, error } = await supabase
       .from("coffee_details")
@@ -41,7 +41,7 @@ export const getCoffeeById = async (id: number) => {
   }
 };
 
-export const getCoffeeByTag = async (tag: string) => {
+export const fetchCoffeeByTag = async (tag: string) => {
   try {
     const { data, error } = await supabase
       .from("coffee_details")
@@ -57,7 +57,7 @@ export const getCoffeeByTag = async (tag: string) => {
   }
 };
 
-export const getTopRatedCoffees = async(limit=5) => {
+export const fetchTopRatedCoffees = async(limit=5) => {
   try {
     const { data, error } = await supabase
       .from("coffee_details")
@@ -74,7 +74,7 @@ export const getTopRatedCoffees = async(limit=5) => {
   }
 }
 
-export const getMostPurchasedCoffee = async(limit=5) => {
+export const fetchMostPurchasedCoffee = async(limit=5) => {
   try {
     const { data, error } = await supabase
       .from("coffee_details")
@@ -97,7 +97,7 @@ export const searchCoffees = async(searcTerm: string) => {
       .from("coffee_details")
       .select("*")
       .ilike('name', `%${searcTerm}%`)
-      
+
     if (error) throw error;
 
     return { data, error: null };

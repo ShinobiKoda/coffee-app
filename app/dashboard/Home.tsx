@@ -2,10 +2,12 @@ import SafeAreaViewWrapper from "@/components/SafeAreaViewWrapper";
 import Spacer from "@/components/Spacer";
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
+import { Coffee, fetchAllCoffees } from "@/lib/coffeeApi";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import { useEffect, useState } from "react";
 import {
+  FlatList,
   ImageBackground,
   Keyboard,
   Pressable,
@@ -16,6 +18,25 @@ import {
 } from "react-native";
 
 const Home = () => {
+  const [coffees, setCoffees] = useState<Coffee[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const getAllCoffees = async () => {
+    setLoading(true);
+    const { data, error } = await fetchAllCoffees();
+    if (data) {
+      setCoffees(data as Coffee[]);
+      console.log("Fetched coffees:", data);
+    } else {
+      console.log("Error fetching coffees:", error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getAllCoffees();
+  }, []);
+
   return (
     <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}>
       <View style={{ flex: 1 }}>
@@ -48,19 +69,36 @@ const Home = () => {
               </View>
             </View>
 
-            <Spacer height={24}/>
-
-            <View style={styles.banner_container}>
-              <ImageBackground
-                source={require("../../assets/images/home-banner.png")}
-                style={styles.banner_img}
-              >
-                <Text style={styles.promo_text}>Promo</Text>
-                <Text style={styles.promo_value}>Buy one get one FREE</Text>
-              </ImageBackground>
-            </View>
+            <Spacer height={24} />
           </SafeAreaViewWrapper>
         </LinearGradient>
+
+        <View
+          style={{
+            paddingHorizontal: 24,
+            position: "relative",
+            top: -56,
+          }}
+        >
+          <View style={styles.banner_container}>
+            <ImageBackground
+              source={require("../../assets/images/home-banner.png")}
+              style={styles.banner_img}
+            >
+              <Text style={styles.promo_text}>Promo</Text>
+              <Text style={styles.promo_value}>Buy one get one FREE</Text>
+            </ImageBackground>
+          </View>
+        </View>
+
+        <FlatList
+        style={styles.flat_list}
+          data={coffees}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <Text style={{ color: "red" }}>{item.name}</Text>
+          )}
+        />
       </View>
     </Pressable>
   );
@@ -74,6 +112,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 24,
   },
+
   location_container: {
     display: "flex",
     flexDirection: "column",
@@ -124,14 +163,13 @@ const styles = StyleSheet.create({
   banner_container: {
     borderRadius: 16,
     minHeight: 160,
-    overflow: "hidden"
+    overflow: "hidden",
   },
   banner_img: {
     paddingHorizontal: 24,
     paddingVertical: 13,
-    flex: 1,
   },
-  promo_text:{
+  promo_text: {
     paddingHorizontal: 6,
     paddingVertical: 4,
     backgroundColor: Colors.promo_red,
@@ -139,11 +177,15 @@ const styles = StyleSheet.create({
     color: "white",
     fontFamily: fonts.semibold,
     fontSize: 14,
-    maxWidth: 70
+    maxWidth: 70,
   },
-  promo_value:{
+  promo_value: {
     fontFamily: fonts.semibold,
     color: "white",
-    fontSize: 32
-    }
+    fontSize: 32,
+  },
+
+  flat_list:{
+    marginTop: 200
+  }
 });
