@@ -1,6 +1,5 @@
 import SafeAreaViewWrapper from "@/components/SafeAreaViewWrapper";
 import Spacer from "@/components/Spacer";
-import { useFonts } from "expo-font";
 import React from "react";
 import {
   ImageBackground,
@@ -9,16 +8,15 @@ import {
   Text,
   View,
 } from "react-native";
+import { useRouter } from "expo-router";
+import { fonts } from "@/constants/fonts";
+import { Colors } from "@/constants/colors";
 
-const HomePage = () => {
-  const fontsLoaded = useFonts({
-    "Sora-Semibold": require("../assets/fonts/Sora/static/Sora-SemiBold.ttf"),
-    "Sora-Regular": require("../assets/fonts/Sora/static/Sora-Regular.ttf"),
-  });
+const Onboarding = () => {
 
-  if (!fontsLoaded) {
-    return null;
-  }
+
+  const router = useRouter()
+
 
   return (
     <ImageBackground
@@ -36,7 +34,7 @@ const HomePage = () => {
           </Text>
         </View>
         <Spacer height={32} />
-        <Pressable onPress={()=>console.log("clicked")}>
+        <Pressable onPress={()=>router.replace('/dashboard/Home')}>
           <Text style={styles.button}>Get Started</Text>
         </Pressable>
       </SafeAreaViewWrapper>
@@ -44,7 +42,7 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Onboarding;
 
 const styles = StyleSheet.create({
   background: {
@@ -61,24 +59,24 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   title: {
-    fontFamily: "Sora-Semibold",
+    fontFamily: fonts.semibold,
     color: "white",
     fontSize: 32,
     textAlign: "center",
   },
   description: {
-    color: "#A2A2A2",
-    fontFamily: "Sora-Regular",
+    color: Colors.grey_light,
+    fontFamily: fonts.regular,
     fontSize: 14,
     textAlign: "center",
   },
   button: {
     color: "white",
-    fontFamily: "Sora-Semibold",
+    fontFamily: fonts.semibold,
     borderRadius: 16,
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: "#C67C4E",
+    backgroundColor: Colors.brown_normal,
     textAlign: "center",
     marginBottom: 20,
   },

@@ -1,18 +1,26 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { Stack } from 'expo-router'
+import { FontProvider } from "@/providers/FontProviders";
+import { Stack } from "expo-router";
+import React from "react";
 
 const RootLayout = () => {
   return (
-    <Stack>
-      <Stack.Screen 
-        name='index'
-        options={{
-          headerShown: false
-        }}
-      />
-    </Stack>
-  )
-}
+    <FontProvider>
+      <Stack>
+        <Stack.Screen
+          name="index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="dashboard"
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack>
+    </FontProvider>
+  );
+};
 
-export default RootLayout
+export default RootLayout;
