@@ -17,9 +17,32 @@ import {
   View,
 } from "react-native";
 
+const categories = [
+  "All Coffee",
+  "Hot",
+  "Strong",
+  "Classic",
+  "Iced",
+  "Sweet",
+  "Popular",
+  "Creamy",
+  "Smooth",
+  "Strong",
+  "Dessert",
+  "Chocolate",
+  "Blended",
+  "Traditional",
+  "Premium",
+  "Alcoholic",
+  "Intense",
+  "Spiced",
+  "Tea-based",
+];
+
 const Home = () => {
   const [coffees, setCoffees] = useState<Coffee[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const[selectedCategory, setSelectedCategory] = useState<string>("All Coffee")
 
   const getAllCoffees = async () => {
     setLoading(true);
@@ -38,15 +61,15 @@ const Home = () => {
   }, []);
 
   return (
-    <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}>
-      <View style={{ flex: 1 }}>
-        <LinearGradient
-          colors={["#111111", "#313131"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.background}
-        >
-          <SafeAreaViewWrapper>
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={["#111111", "#313131"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.background}
+      >
+        <SafeAreaViewWrapper>
+          <Pressable onPress={Keyboard.dismiss}>
             <View style={styles.location_container}>
               <Text style={styles.location_heading}>Location</Text>
               <Text style={styles.location_value}>
@@ -70,37 +93,44 @@ const Home = () => {
             </View>
 
             <Spacer height={24} />
-          </SafeAreaViewWrapper>
-        </LinearGradient>
+          </Pressable>
+        </SafeAreaViewWrapper>
+      </LinearGradient>
 
-        <View
-          style={{
-            paddingHorizontal: 24,
-            position: "relative",
-            top: -56,
-          }}
-        >
-          <View style={styles.banner_container}>
-            <ImageBackground
-              source={require("../../assets/images/home-banner.png")}
-              style={styles.banner_img}
-            >
-              <Text style={styles.promo_text}>Promo</Text>
-              <Text style={styles.promo_value}>Buy one get one FREE</Text>
-            </ImageBackground>
-          </View>
+      <View
+        style={{
+          paddingHorizontal: 24,
+          position: "relative",
+          top: -56,
+        }}
+      >
+        <View style={styles.banner_container}>
+          <ImageBackground
+            source={require("../../assets/images/home-banner.png")}
+            style={styles.banner_img}
+          >
+            <Text style={styles.promo_text}>Promo</Text>
+            <Text style={styles.promo_value}>Buy one get one FREE</Text>
+          </ImageBackground>
         </View>
-
-        <FlatList
-        style={styles.flat_list}
-          data={coffees}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <Text style={{ color: "red" }}>{item.name}</Text>
-          )}
-        />
       </View>
-    </Pressable>
+
+      <Spacer height={24} style={{ marginTop: -56 }} />
+
+      <FlatList
+        data={categories}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <Pressable onPress={()=>setSelectedCategory(item)}>
+            <Text style={[styles.category_item, item === selectedCategory ? {backgroundColor: Colors.brown_normal, color: "white"} : {backgroundColor: Colors.brown_text}]}>{item}</Text>
+          </Pressable>
+        )}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.category_content}
+        style={styles.category_container}
+      />
+    </View>
   );
 };
 
@@ -185,7 +215,21 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
 
-  flat_list:{
-    marginTop: 200
-  }
+  category_container: {
+    maxHeight: 40,
+  },
+
+  category_content: {
+    paddingHorizontal: 24,
+    gap: 8,
+  },
+
+  category_item: {
+    fontFamily: fonts.semibold,
+    color: Colors.grey_text,
+    paddingHorizontal: 4,
+    paddingVertical: 8,
+    backgroundColor: Colors.brown_text,
+    borderRadius: 6,
+  },
 });
