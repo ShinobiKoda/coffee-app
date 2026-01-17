@@ -1,18 +1,20 @@
 import {
   AnimatedPressable,
-  StaggeredItem,
   FadeInView,
-  SlideInView
+  FadeSlideInView,
+  StaggeredItem,
 } from "@/components/animations/Reanimated";
+import CoffeeCard from "@/components/CoffeeCard";
 import SafeAreaViewWrapper from "@/components/SafeAreaViewWrapper";
 import Spacer from "@/components/Spacer";
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
-import { Coffee, fetchAllCoffees } from "@/lib/coffeeApi";
+import { Coffee, fetchAllCoffees, fetchCoffeeByTag } from "@/lib/coffeeApi";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   ImageBackground,
   Keyboard,
@@ -33,7 +35,6 @@ const categories = [
   "Popular",
   "Creamy",
   "Smooth",
-  "Strong",
   "Dessert",
   "Chocolate",
   "Blended",
@@ -45,26 +46,88 @@ const categories = [
   "Tea-based",
 ];
 
+const CategoryItem = ({
+  item,
+  isSelected,
+  onPress,
+}: {
+  item: string;
+  isSelected: boolean;
+  onPress: () => void;
+}) => (
+  <Pressable onPress={onPress}>
+    <Text
+      style={[
+        styles.category_item,
+        isSelected ? styles.category_selected : styles.category_unselected,
+      ]}
+    >
+      {item}
+    </Text>
+  </Pressable>
+);
+
 const Home = () => {
   const [coffees, setCoffees] = useState<Coffee[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] =
     useState<string>("All Coffee");
 
-  const getAllCoffees = async () => {
+  const getCoffeesByCategory = async (category: string) => {
     setLoading(true);
-    const { data, error } = await fetchAllCoffees();
-    if (data) {
-      setCoffees(data as Coffee[]);
+
+    if (category === "All Coffee") {
+      const { data, error } = await fetchAllCoffees();
+      if (data) {
+        setCoffees(data as Coffee[]);
+      } else {
+        console.log("Error fetching coffees:", error);
+      }
     } else {
-      console.log("Error fetching coffees:", error);
+      const { data, error } = await fetchCoffeeByTag(category.toLowerCase());
+      if (data) {
+        setCoffees(data as Coffee[]);
+      } else {
+        console.log("Error fetching coffees by tag:", error);
+      }
     }
+
     setLoading(false);
   };
 
   useEffect(() => {
-    getAllCoffees();
-  }, []);
+    getCoffeesByCategory(selectedCategory);
+  }, [selectedCategory]);
+
+  const handleCategoryPress = (category: string) => {
+    setSelectedCategory(category);
+  };
+
+  const renderCategory = useCallback(
+    ({ item }: { item: string }) => (
+      <CategoryItem
+        item={item}
+        isSelected={item === selectedCategory}
+        onPress={() => handleCategoryPress(item)}
+      />
+    ),
+    [selectedCategory],
+  );
+
+  const renderCoffee = useCallback(
+    ({ item, index }: { item: Coffee; index: number }) => (
+      <StaggeredItem index={index} staggerDelay={50}>
+        <CoffeeCard
+          name={item.name}
+          image_url={item.image_url}
+          tags={item.tags}
+          price={item.price}
+          selectedCategory={selectedCategory}
+        />
+      </StaggeredItem>
+    ),
+    [selectedCategory],
+  );
 
   return (
     <View style={{ flex: 1 }}>
@@ -76,14 +139,14 @@ const Home = () => {
       >
         <SafeAreaViewWrapper>
           <Pressable onPress={Keyboard.dismiss}>
-            <SlideInView direction="down" style={styles.location_container}>
+            <FadeInView style={styles.location_container}>
               <Text style={styles.location_heading}>Location</Text>
               <Text style={styles.location_value}>
                 Akure, Ondo State, Nigeria
               </Text>
-            </SlideInView>
+            </FadeInView>
             <Spacer height={24} />
-            <FadeInView  style={styles.search_container}>
+            <FadeInView style={styles.search_container}>
               <View style={styles.searchbar}>
                 <Ionicons size={20} name="search" color="white" />
                 <TextInput
@@ -97,7 +160,6 @@ const Home = () => {
                 <Ionicons name="filter-outline" size={20} color={"white"} />
               </AnimatedPressable>
             </FadeInView>
-
             <Spacer height={24} />
           </Pressable>
         </SafeAreaViewWrapper>
@@ -110,7 +172,7 @@ const Home = () => {
           top: -56,
         }}
       >
-        <FadeInView style={styles.banner_container}>
+        <FadeSlideInView style={styles.banner_container}>
           <ImageBackground
             source={require("../../assets/images/home-banner.png")}
             style={styles.banner_img}
@@ -118,35 +180,47 @@ const Home = () => {
             <Text style={styles.promo_text}>Promo</Text>
             <Text style={styles.promo_value}>Buy one get one FREE</Text>
           </ImageBackground>
-        </FadeInView>
+        </FadeSlideInView>
       </View>
 
       <Spacer height={24} style={{ marginTop: -56 }} />
 
-      <FlatList
-        data={categories}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <StaggeredItem index={index} staggerDelay={50} direction="up">
-            <Pressable onPress={() => setSelectedCategory(item)}>
-              <Text
-                style={[
-                  styles.category_item,
-                  item === selectedCategory
-                    ? { backgroundColor: Colors.brown_normal, color: "white" }
-                    : { backgroundColor: Colors.brown_text },
-                ]}
-              >
-                {item}
-              </Text>
-            </Pressable>
-          </StaggeredItem>
-        )}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.category_content}
-        style={styles.category_container}
-      />
+      <FadeInView>
+        <FlatList
+          data={categories}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderCategory}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.category_content}
+          style={styles.category_container}
+        />
+      </FadeInView>
+
+      <Spacer height={16} />
+
+      {loading ? (
+        <View style={styles.loading_container}>
+          <ActivityIndicator size="large" color={Colors.brown_normal} />
+        </View>
+      ) : coffees.length === 0 ? (
+        <View style={styles.empty_container}>
+          <Text style={styles.empty_text}>
+            No coffees found for this category
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={coffees}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
+          renderItem={renderCoffee}
+          contentContainerStyle={styles.coffee_content}
+          columnWrapperStyle={styles.coffee_row}
+          style={{ flex: 1 }}
+          extraData={selectedCategory}
+        />
+      )}
     </View>
   );
 };
@@ -243,10 +317,47 @@ const styles = StyleSheet.create({
 
   category_item: {
     fontFamily: fonts.semibold,
-    color: Colors.grey_text,
-    paddingHorizontal: 4,
+    paddingHorizontal: 8,
     paddingVertical: 8,
-    backgroundColor: Colors.brown_text,
     borderRadius: 6,
+    overflow: "hidden",
+  },
+
+  category_selected: {
+    backgroundColor: Colors.brown_normal,
+    color: "white",
+  },
+
+  category_unselected: {
+    backgroundColor: Colors.brown_text,
+    color: Colors.grey_light,
+  },
+
+  coffee_content: {
+    paddingHorizontal: 24,
+    gap: 16,
+  },
+
+  coffee_row: {
+    justifyContent: "space-between",
+    gap: 16,
+  },
+
+  loading_container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  empty_container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  empty_text: {
+    fontFamily: fonts.regular,
+    fontSize: 14,
+    color: Colors.grey_light,
   },
 });

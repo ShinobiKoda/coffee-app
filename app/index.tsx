@@ -11,6 +11,7 @@ import {
 import { useRouter } from "expo-router";
 import { fonts } from "@/constants/fonts";
 import { Colors } from "@/constants/colors";
+import { AnimatedPressable } from "@/components/animations/Reanimated";
 
 const Onboarding = () => {
 
@@ -34,9 +35,9 @@ const Onboarding = () => {
           </Text>
         </View>
         <Spacer height={32} />
-        <Pressable onPress={()=>router.replace('/dashboard/Home')}>
+        <AnimatedPressable onPress={()=>router.replace('/dashboard/Home')}>
           <Text style={styles.button}>Get Started</Text>
-        </Pressable>
+        </AnimatedPressable>
       </SafeAreaViewWrapper>
     </ImageBackground>
   );

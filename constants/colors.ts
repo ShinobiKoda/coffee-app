@@ -4,6 +4,7 @@ export const Colors = {
   grey_normal: "#2A2A2A",
   promo_red: "#ED5151",
   grey_text: "#313131",
-  brown_text: "#EDEDED"
+  brown_text: "#EDEDED",
+  grey_dark: "#050505"
   
 }
