@@ -10,6 +10,7 @@ import Spacer from "@/components/Spacer";
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
 import { Coffee, fetchAllCoffees, fetchCoffeeByTag } from "@/lib/coffeeApi";
+import { getCurrentLocation } from "@/lib/locationApi";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useState } from "react";
@@ -72,6 +73,20 @@ const Home = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] =
     useState<string>("All Coffee");
+  const [location, setLocation] = useState<string | null>("");
+  const [locationLoading, setLocationLoading] = useState<boolean>(false);
+
+  const fetchUserCurrentLocation = async () => {
+    setLocationLoading(true);
+    const { data, error } = await getCurrentLocation();
+    if (data) {
+      setLocation(data.formattedAddress);
+      console.log(data.formattedAddress); // "Akure, Ondo State, Nigeria"
+      console.log(data.city); // "Akure"
+      console.log(data.latitude); // 7.2526
+    }
+    setLocationLoading(false);
+  };
 
   const getCoffeesByCategory = async (category: string) => {
     setLoading(true);
@@ -98,6 +113,10 @@ const Home = () => {
   useEffect(() => {
     getCoffeesByCategory(selectedCategory);
   }, [selectedCategory]);
+
+  useEffect(() => {
+    fetchUserCurrentLocation();
+  }, []);
 
   const handleCategoryPress = (category: string) => {
     setSelectedCategory(category);
@@ -141,9 +160,13 @@ const Home = () => {
           <Pressable onPress={Keyboard.dismiss}>
             <FadeInView style={styles.location_container}>
               <Text style={styles.location_heading}>Location</Text>
-              <Text style={styles.location_value}>
-                Akure, Ondo State, Nigeria
-              </Text>
+              {locationLoading ? (
+                <View style={styles.location_loading_container}>
+                  <ActivityIndicator size="small" color={Colors.brown_normal} />
+                </View>
+              ) : (
+                <Text style={styles.location_value}>{location}</Text>
+              )}
             </FadeInView>
             <Spacer height={24} />
             <FadeInView style={styles.search_container}>
@@ -347,6 +370,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  location_loading_container:{
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    marginTop: 8
+  
   },
 
   empty_container: {
