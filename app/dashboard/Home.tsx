@@ -20,6 +20,7 @@ import {
   ImageBackground,
   Keyboard,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -149,7 +150,7 @@ const Home = () => {
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
       <LinearGradient
         colors={["#111111", "#313131"]}
         start={{ x: 0, y: 0 }}
@@ -158,16 +159,18 @@ const Home = () => {
       >
         <SafeAreaViewWrapper>
           <Pressable onPress={Keyboard.dismiss}>
-            <FadeInView style={styles.location_container}>
+            <View style={styles.location_container}>
               <Text style={styles.location_heading}>Location</Text>
               {locationLoading ? (
                 <View style={styles.location_loading_container}>
                   <ActivityIndicator size="small" color={Colors.brown_normal} />
                 </View>
               ) : (
-                <Text style={styles.location_value}>{location}</Text>
+                <FadeInView>
+                  <Text style={styles.location_value}>{location}</Text>
+                </FadeInView>
               )}
-            </FadeInView>
+            </View>
             <Spacer height={24} />
             <FadeInView style={styles.search_container}>
               <View style={styles.searchbar}>
@@ -233,18 +236,22 @@ const Home = () => {
           </Text>
         </View>
       ) : (
-        <FlatList
-          data={coffees}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
-          renderItem={renderCoffee}
-          contentContainerStyle={styles.coffee_content}
-          columnWrapperStyle={styles.coffee_row}
-          style={{ flex: 1 }}
-          extraData={selectedCategory}
-        />
+        <View style={styles.coffee_grid}>
+          {coffees.map((item, index) => (
+            <StaggeredItem key={item.id} index={index} staggerDelay={50}>
+              <CoffeeCard
+                name={item.name}
+                image_url={item.image_url}
+                tags={item.tags}
+                price={item.price}
+                selectedCategory={selectedCategory}
+              />
+            </StaggeredItem>
+          ))}
+        </View>
       )}
-    </View>
+      <Spacer height={100} />
+    </ScrollView>
   );
 };
 
@@ -356,6 +363,14 @@ const styles = StyleSheet.create({
     color: Colors.grey_light,
   },
 
+  coffee_grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    paddingHorizontal: 24,
+    rowGap: 16,
+    justifyContent: "space-between",
+  },
+
   coffee_content: {
     paddingHorizontal: 24,
     gap: 16,
@@ -367,21 +382,20 @@ const styles = StyleSheet.create({
   },
 
   loading_container: {
-    flex: 1,
+    minHeight: 200,
     justifyContent: "center",
     alignItems: "center",
   },
 
-  location_loading_container:{
+  location_loading_container: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    marginTop: 8
-  
+    marginTop: 8,
   },
 
   empty_container: {
-    flex: 1,
+    minHeight: 200,
     justifyContent: "center",
     alignItems: "center",
   },
