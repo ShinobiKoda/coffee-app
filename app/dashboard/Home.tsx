@@ -1,3 +1,9 @@
+import {
+  AnimatedPressable,
+  StaggeredItem,
+  FadeInView,
+  SlideInView
+} from "@/components/animations/Reanimated";
 import SafeAreaViewWrapper from "@/components/SafeAreaViewWrapper";
 import Spacer from "@/components/Spacer";
 import { Colors } from "@/constants/colors";
@@ -42,14 +48,14 @@ const categories = [
 const Home = () => {
   const [coffees, setCoffees] = useState<Coffee[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const[selectedCategory, setSelectedCategory] = useState<string>("All Coffee")
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>("All Coffee");
 
   const getAllCoffees = async () => {
     setLoading(true);
     const { data, error } = await fetchAllCoffees();
     if (data) {
       setCoffees(data as Coffee[]);
-      console.log("Fetched coffees:", data);
     } else {
       console.log("Error fetching coffees:", error);
     }
@@ -70,14 +76,14 @@ const Home = () => {
       >
         <SafeAreaViewWrapper>
           <Pressable onPress={Keyboard.dismiss}>
-            <View style={styles.location_container}>
+            <SlideInView direction="down" style={styles.location_container}>
               <Text style={styles.location_heading}>Location</Text>
               <Text style={styles.location_value}>
                 Akure, Ondo State, Nigeria
               </Text>
-            </View>
+            </SlideInView>
             <Spacer height={24} />
-            <View style={styles.search_container}>
+            <FadeInView  style={styles.search_container}>
               <View style={styles.searchbar}>
                 <Ionicons size={20} name="search" color="white" />
                 <TextInput
@@ -87,10 +93,10 @@ const Home = () => {
                   style={styles.input_field}
                 />
               </View>
-              <View style={styles.filter_button}>
+              <AnimatedPressable style={styles.filter_button}>
                 <Ionicons name="filter-outline" size={20} color={"white"} />
-              </View>
-            </View>
+              </AnimatedPressable>
+            </FadeInView>
 
             <Spacer height={24} />
           </Pressable>
@@ -104,7 +110,7 @@ const Home = () => {
           top: -56,
         }}
       >
-        <View style={styles.banner_container}>
+        <FadeInView style={styles.banner_container}>
           <ImageBackground
             source={require("../../assets/images/home-banner.png")}
             style={styles.banner_img}
@@ -112,7 +118,7 @@ const Home = () => {
             <Text style={styles.promo_text}>Promo</Text>
             <Text style={styles.promo_value}>Buy one get one FREE</Text>
           </ImageBackground>
-        </View>
+        </FadeInView>
       </View>
 
       <Spacer height={24} style={{ marginTop: -56 }} />
@@ -120,10 +126,21 @@ const Home = () => {
       <FlatList
         data={categories}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <Pressable onPress={()=>setSelectedCategory(item)}>
-            <Text style={[styles.category_item, item === selectedCategory ? {backgroundColor: Colors.brown_normal, color: "white"} : {backgroundColor: Colors.brown_text}]}>{item}</Text>
-          </Pressable>
+        renderItem={({ item, index }) => (
+          <StaggeredItem index={index} staggerDelay={50} direction="up">
+            <Pressable onPress={() => setSelectedCategory(item)}>
+              <Text
+                style={[
+                  styles.category_item,
+                  item === selectedCategory
+                    ? { backgroundColor: Colors.brown_normal, color: "white" }
+                    : { backgroundColor: Colors.brown_text },
+                ]}
+              >
+                {item}
+              </Text>
+            </Pressable>
+          </StaggeredItem>
         )}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
