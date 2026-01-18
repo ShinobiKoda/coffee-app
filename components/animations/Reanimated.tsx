@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Pressable, PressableProps, ViewStyle } from "react-native";
+import { Pressable, PressableProps, StyleProp, ViewStyle } from "react-native";
 import Animated, {
   Easing,
   FadeIn,
@@ -57,7 +57,7 @@ interface ScaleButtonProps extends Omit<PressableProps, "style"> {
 
 interface AnimatedPressableProps extends Omit<PressableProps, "style"> {
   children: ReactNode;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   scaleOnPress?: number;
   opacityOnPress?: number;
 }

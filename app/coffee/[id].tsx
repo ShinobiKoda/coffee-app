@@ -1,18 +1,22 @@
+import { AnimatedPressable } from "@/components/animations/Reanimated";
 import Navbar from "@/components/Navbar";
 import SafeAreaViewWrapper from "@/components/SafeAreaViewWrapper";
 import Spacer from "@/components/Spacer";
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
 import { Coffee, fetchCoffeeById } from "@/lib/coffeeApi";
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 const CoffeeDetails = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [coffee, setCoffee] = useState<Coffee | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [sizeSelected, setSizeSelected] = useState<string>("S");
+
+  const sizes = ["S", "M", "L"];
 
   useEffect(() => {
     const getCoffeeDetails = async () => {
@@ -72,7 +76,7 @@ const CoffeeDetails = () => {
                 <Text style={styles.tags}>{formatTags(coffee.tags)}</Text>
               </View>
               <View style={styles.rating_container}>
-                <Ionicons name="star" size={20} color="#FBBE21"/>
+                <Ionicons name="star" size={20} color="#FBBE21" />
                 <Text style={styles.rating}>{coffee.rating}</Text>
                 <Text style={styles.purchases}>({coffee.purchases})</Text>
               </View>
@@ -88,11 +92,35 @@ const CoffeeDetails = () => {
             <Text style={styles.description_content}>{coffee.description}</Text>
           </View>
 
-          <Spacer height={24}/>
+          <Spacer height={24} />
 
-          <View>
-            <Text>Size</Text>
-            <View></View>
+          <View style={styles.sizes_container}>
+            <Text style={styles.size_title}>Size</Text>
+            <View style={styles.sizes_options_container}>
+              {sizes.map((size, index) => (
+                <AnimatedPressable
+                  key={index}
+                  style={[
+                    styles.size_option_btn,
+                    size === sizeSelected
+                      ? styles.size_option_btn_selected
+                      : styles.size_option_btn_unselected,
+                  ]}
+                  onPress={() => setSizeSelected(size)}
+                >
+                  <Text
+                    style={[
+                      styles.size_option_value,
+                      size === sizeSelected
+                        ? styles.size_option_value_selected
+                        : styles.size_option_value_unselected,
+                    ]}
+                  >
+                    {size}
+                  </Text>
+                </AnimatedPressable>
+              ))}
+            </View>
           </View>
         </View>
       )}
@@ -141,7 +169,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    gap: 4
+    gap: 4,
   },
 
   name: {
@@ -154,44 +182,91 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     fontFamily: fonts.regular,
     fontSize: 12,
-    color: Colors.grey_light
+    color: Colors.grey_light,
   },
 
-  rating:{
+  rating: {
     fontFamily: fonts.semibold,
     fontSize: 16,
-    color: Colors.grey_normal
+    color: Colors.grey_normal,
   },
 
   purchases: {
     fontFamily: fonts.regular,
     fontSize: 12,
-    color: Colors.grey_light
+    color: Colors.grey_light,
   },
 
-  divider_line:{
+  divider_line: {
     margin: 16,
     height: 1,
     backgroundColor: Colors.grey_line,
   },
 
-  description_container:{
+  description_container: {
     display: "flex",
     flexDirection: "column",
-    gap: 8
+    gap: 8,
   },
 
-  description_title:{
+  description_title: {
     fontFamily: fonts.semibold,
     fontSize: 16,
-    color: Colors.grey_normal
+    color: Colors.grey_normal,
   },
 
   description_content: {
     fontFamily: fonts.light,
     fontSize: 14,
-    color: Colors.grey_light
+    color: Colors.grey_light,
   },
 
+  sizes_container: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+  },
 
+  size_title: {
+    fontFamily: fonts.semibold,
+    fontSize: 16,
+    color: Colors.grey_normal,
+  },
+
+  sizes_options_container: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  size_option_btn: {
+    paddingVertical: 16,
+    paddingHorizontal: 43,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+
+  size_option_btn_selected: {
+    backgroundColor: Colors.brown_light,
+    borderColor: Colors.brown_normal,
+  },
+
+  size_option_value: {
+    fontFamily: fonts.regular,
+    fontSize: 14,
+  },
+
+  size_option_value_selected: {
+    color: Colors.brown_normal,
+  },
+
+  size_option_value_unselected: {
+    color: Colors.grey_normal,
+  },
+
+  size_option_btn_unselected: {
+    backgroundColor: "white",
+    borderColor: Colors.grey_line,
+  },
 });

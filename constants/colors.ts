@@ -6,6 +6,7 @@ export const Colors = {
   grey_text: "#313131",
   brown_text: "#EDEDED",
   grey_dark: "#050505",
-  grey_line: "#E3E3E3"
+  grey_line: "#E3E3E3",
+  brown_light: "#F9F2ED"
   
 }
