@@ -54,7 +54,7 @@ const CoffeeCard = ({ image_url, name, tags, price, selectedCategory }: CoffeCar
         <Text style={styles.tag}>{formatTags(tags, selectedCategory)}</Text>
       </View>
       <View style={styles.cart}>
-        <Text style={styles.price}>$ {price}</Text>
+        <Text style={styles.price}>₦ {price}</Text>
         <AnimatedPressable style={styles.add_to_cart_btn}>
           <Ionicons name="add" size={20} color="white" />
         </AnimatedPressable>

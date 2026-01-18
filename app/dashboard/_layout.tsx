@@ -66,6 +66,12 @@ const DashboardLayout = () => {
           ),
         }}
       />
+       <Tabs.Screen
+        name="coffee/[id]"
+        options={{
+          href: null
+        }}
+      />
     </Tabs>
   );
 };

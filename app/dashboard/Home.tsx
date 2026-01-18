@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
 
   category_content: {
     paddingHorizontal: 24,
-    gap: 8,
+    gap: 16,
   },
 
   category_item: {
