@@ -23,6 +23,12 @@ const CoffeeDetails = () => {
 
   const sizes = ["S", "M", "L"];
 
+  const superiority = [
+    <Ionicons name="bicycle" size={24} color={Colors.brown_normal} />,
+    <Ionicons name="cafe" size={24} color={Colors.brown_normal} />,
+    <Ionicons name="bag-check" size={24} color={Colors.brown_normal} />,
+  ];
+
   useEffect(() => {
     const getCoffeeDetails = async () => {
       if (!id) return;
@@ -87,7 +93,18 @@ const CoffeeDetails = () => {
               </View>
             </View>
 
-            <View></View>
+            <View style={styles.superiority_container}>
+              {superiority.map((icon, index) => (
+                <StaggeredItem
+                  index={index}
+                  key={index}
+                  staggerDelay={100}
+                  style={styles.superiority_icon}
+                >
+                  {icon}
+                </StaggeredItem>
+              ))}
+            </View>
           </FadeInView>
 
           <View style={styles.divider_line}></View>
@@ -105,7 +122,6 @@ const CoffeeDetails = () => {
               {sizes.map((size, index) => (
                 <StaggeredItem key={index} index={index} staggerDelay={50}>
                   <AnimatedPressable
-                    
                     style={[
                       styles.size_option_btn,
                       size === sizeSelected
@@ -170,6 +186,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 16,
+    flex: 1,
+    marginRight: 12,
   },
 
   rating_container: {
@@ -275,5 +293,23 @@ const styles = StyleSheet.create({
   size_option_btn_unselected: {
     backgroundColor: "white",
     borderColor: Colors.grey_line,
+  },
+
+  superiority_container: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  superiority_icon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.grey_line,
   },
 });
