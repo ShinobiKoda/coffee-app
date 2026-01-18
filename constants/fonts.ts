@@ -1,4 +1,5 @@
 export const fonts = {
   semibold: "Sora-Semibold",
-  regular: "Sora-Regular"
+  regular: "Sora-Regular",
+  light: "Sora-Light"
 };

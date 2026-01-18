@@ -5,6 +5,7 @@ export const Colors = {
   promo_red: "#ED5151",
   grey_text: "#313131",
   brown_text: "#EDEDED",
-  grey_dark: "#050505"
+  grey_dark: "#050505",
+  grey_line: "#E3E3E3"
   
 }

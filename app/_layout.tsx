@@ -22,6 +22,12 @@ const RootLayout = () => {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="coffee/[id]"
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack>
       </View>
     </FontProvider>

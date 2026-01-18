@@ -1,16 +1,18 @@
-import React from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
 import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { AnimatedPressable } from "./animations/Reanimated";
 
 interface CoffeCardProps {
+  id: number;
   image_url: string;
   name: string;
   tags: string[];
   price: number;
   selectedCategory?: string;
+  handleNavigation?: (id: number) => void;
 }
 
 const truncateName = (name: string, maxWords: number = 2): string => {
@@ -23,32 +25,42 @@ const truncateName = (name: string, maxWords: number = 2): string => {
 
 const formatTags = (tags: string[], selectedCategory?: string): string => {
   if (!tags || tags.length === 0) return "";
-  
+
   // If a specific category is selected (not "All Coffee"), show only that tag
   if (selectedCategory && selectedCategory !== "All Coffee") {
     const matchingTag = tags.find(
-      (tag) => tag.toLowerCase() === selectedCategory.toLowerCase()
+      (tag) => tag.toLowerCase() === selectedCategory.toLowerCase(),
     );
     return matchingTag || tags[0];
   }
-  
+
   // For "All Coffee", show tags like "tag1/tag2..."
   if (tags.length === 1) return tags[0];
   if (tags.length === 2) return `${tags[0]}/${tags[1]}`;
   return `${tags[0]}/${tags[1]}...`;
 };
 
-const CoffeeCard = ({ image_url, name, tags, price, selectedCategory }: CoffeCardProps) => {
+const CoffeeCard = ({
+  id,
+  image_url,
+  name,
+  tags,
+  price,
+  selectedCategory,
+  handleNavigation,
+}: CoffeCardProps) => {
   return (
     <View style={styles.container}>
-      <View style={styles.image_container}>
-        <Image
-          source={{ uri: image_url }}
-          style={styles.image}
-          resizeMode="cover"
-          accessibilityLabel={`${name} coffee image`}
-        />
-      </View>
+      <AnimatedPressable onPress={() => handleNavigation?.(id)}>
+        <View style={styles.image_container}>
+          <Image
+            source={{ uri: image_url }}
+            style={styles.image}
+            resizeMode="cover"
+            accessibilityLabel={`${name} coffee image`}
+          />
+        </View>
+      </AnimatedPressable>
       <View style={styles.description}>
         <Text style={styles.name}>{truncateName(name)}</Text>
         <Text style={styles.tag}>{formatTags(tags, selectedCategory)}</Text>

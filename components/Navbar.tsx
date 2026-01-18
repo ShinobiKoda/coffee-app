@@ -1,9 +1,10 @@
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useState } from "react";
+import { AnimatedPressable } from "./animations/Reanimated";
 
 interface NavbarProps {
   title?: string;
@@ -12,16 +13,24 @@ interface NavbarProps {
 }
 
 const Navbar = ({ title, showBackButton, showFavoriteIcon }: NavbarProps) => {
-
+  const router = useRouter();
   const [pressed, setPressed] = useState<boolean>(false);
 
   return (
     <View style={styles.container}>
-      {showBackButton && <Ionicons name="chevron-back-outline" size={24} />}
+      {showBackButton && (
+        <AnimatedPressable onPress={()=>router.back()}>
+          <Ionicons name="chevron-back-outline" size={24} />
+        </AnimatedPressable>
+      )}
       {title && <Text style={styles.title}>{title}</Text>}
       {showFavoriteIcon && (
-        <Pressable onPress={()=> setPressed(true)}>
-          <Ionicons name={pressed ? "heart" : "heart-outline"} size={24} color={Colors.brown_normal}/>
+        <Pressable onPress={() => setPressed(!pressed)}>
+          <Ionicons
+            name={pressed ? "heart" : "heart-outline"}
+            size={24}
+            color={Colors.brown_normal}
+          />
         </Pressable>
       )}
     </View>

@@ -9,6 +9,7 @@ export function FontProvider({ children }: Props) {
   const fontsLoaded = useFonts({
     "Sora-Semibold": require("../assets/fonts/Sora/static/Sora-SemiBold.ttf"),
     "Sora-Regular": require("../assets/fonts/Sora/static/Sora-Regular.ttf"),
+    "Sora-Light": require("../assets/fonts/Sora/static/Sora-Light.ttf"),
   });
 
   if (!fontsLoaded) return null;

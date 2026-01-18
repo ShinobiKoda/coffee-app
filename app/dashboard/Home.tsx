@@ -9,10 +9,11 @@ import SafeAreaViewWrapper from "@/components/SafeAreaViewWrapper";
 import Spacer from "@/components/Spacer";
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
-import { Coffee, fetchAllCoffees, fetchCoffeeByTag } from "@/lib/coffeeApi";
+import { Coffee, fetchAllCoffees, fetchCoffeeByTag, fetchCoffeeById } from "@/lib/coffeeApi";
 import { getCurrentLocation } from "@/lib/locationApi";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -70,6 +71,7 @@ const CategoryItem = ({
 );
 
 const Home = () => {
+  const router = useRouter();
   const [coffees, setCoffees] = useState<Coffee[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] =
@@ -123,6 +125,10 @@ const Home = () => {
     setSelectedCategory(category);
   };
 
+  const goToCoffeeDetail = (id: number) => {
+    router.push(`/coffee/${id}`);
+  };
+
   const renderCategory = useCallback(
     ({ item }: { item: string }) => (
       <CategoryItem
@@ -134,20 +140,7 @@ const Home = () => {
     [selectedCategory],
   );
 
-  const renderCoffee = useCallback(
-    ({ item, index }: { item: Coffee; index: number }) => (
-      <StaggeredItem index={index} staggerDelay={50}>
-        <CoffeeCard
-          name={item.name}
-          image_url={item.image_url}
-          tags={item.tags}
-          price={item.price}
-          selectedCategory={selectedCategory}
-        />
-      </StaggeredItem>
-    ),
-    [selectedCategory],
-  );
+ 
 
   return (
     <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
@@ -240,11 +233,13 @@ const Home = () => {
           {coffees.map((item, index) => (
             <StaggeredItem key={item.id} index={index} staggerDelay={50}>
               <CoffeeCard
+                id={item.id}
                 name={item.name}
                 image_url={item.image_url}
                 tags={item.tags}
                 price={item.price}
                 selectedCategory={selectedCategory}
+                handleNavigation={goToCoffeeDetail}
               />
             </StaggeredItem>
           ))}
