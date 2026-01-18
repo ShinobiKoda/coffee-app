@@ -1,4 +1,9 @@
-import { AnimatedPressable } from "@/components/animations/Reanimated";
+import {
+  AnimatedPressable,
+  FadeInView,
+  FadeSlideInView,
+  StaggeredItem,
+} from "@/components/animations/Reanimated";
 import Navbar from "@/components/Navbar";
 import SafeAreaViewWrapper from "@/components/SafeAreaViewWrapper";
 import Spacer from "@/components/Spacer";
@@ -60,16 +65,16 @@ const CoffeeDetails = () => {
 
       {coffee && (
         <View style={styles.container}>
-          <View style={styles.image_container}>
+          <FadeSlideInView style={styles.image_container}>
             <Image
               source={{ uri: coffee.image_url }}
               alt="Coffee Image"
               resizeMode="cover"
               style={styles.image}
             />
-          </View>
+          </FadeSlideInView>
           <Spacer height={16} />
-          <View style={styles.short_description_container}>
+          <FadeInView style={styles.short_description_container}>
             <View style={styles.name_container}>
               <View>
                 <Text style={styles.name}>{coffee.name}</Text>
@@ -83,14 +88,14 @@ const CoffeeDetails = () => {
             </View>
 
             <View></View>
-          </View>
+          </FadeInView>
 
           <View style={styles.divider_line}></View>
 
-          <View style={styles.description_container}>
+          <FadeInView style={styles.description_container}>
             <Text style={styles.description_title}>Description</Text>
             <Text style={styles.description_content}>{coffee.description}</Text>
-          </View>
+          </FadeInView>
 
           <Spacer height={24} />
 
@@ -98,27 +103,29 @@ const CoffeeDetails = () => {
             <Text style={styles.size_title}>Size</Text>
             <View style={styles.sizes_options_container}>
               {sizes.map((size, index) => (
-                <AnimatedPressable
-                  key={index}
-                  style={[
-                    styles.size_option_btn,
-                    size === sizeSelected
-                      ? styles.size_option_btn_selected
-                      : styles.size_option_btn_unselected,
-                  ]}
-                  onPress={() => setSizeSelected(size)}
-                >
-                  <Text
+                <StaggeredItem key={index} index={index} staggerDelay={50}>
+                  <AnimatedPressable
+                    
                     style={[
-                      styles.size_option_value,
+                      styles.size_option_btn,
                       size === sizeSelected
-                        ? styles.size_option_value_selected
-                        : styles.size_option_value_unselected,
+                        ? styles.size_option_btn_selected
+                        : styles.size_option_btn_unselected,
                     ]}
+                    onPress={() => setSizeSelected(size)}
                   >
-                    {size}
-                  </Text>
-                </AnimatedPressable>
+                    <Text
+                      style={[
+                        styles.size_option_value,
+                        size === sizeSelected
+                          ? styles.size_option_value_selected
+                          : styles.size_option_value_unselected,
+                      ]}
+                    >
+                      {size}
+                    </Text>
+                  </AnimatedPressable>
+                </StaggeredItem>
               ))}
             </View>
           </View>
