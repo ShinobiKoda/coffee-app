@@ -6,10 +6,12 @@ import {
 } from "@/components/animations/Reanimated";
 import CoffeeCard from "@/components/CoffeeCard";
 import SafeAreaViewWrapper from "@/components/SafeAreaViewWrapper";
+import SearchResults from "@/components/SearchResults";
 import Spacer from "@/components/Spacer";
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
-import { Coffee, fetchAllCoffees, fetchCoffeeByTag, fetchCoffeeById } from "@/lib/coffeeApi";
+import { useSearch } from "@/hooks/useSearch";
+import { Coffee, fetchAllCoffees, fetchCoffeeByTag } from "@/lib/coffeeApi";
 import { getCurrentLocation } from "@/lib/locationApi";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -79,6 +81,16 @@ const Home = () => {
   const [location, setLocation] = useState<string | null>("");
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
 
+  // Search functionality
+  const {
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    isSearching,
+    isSearchActive,
+    clearSearch,
+  } = useSearch(300);
+
   const fetchUserCurrentLocation = async () => {
     setLocationLoading(true);
     const { data, error } = await getCurrentLocation();
@@ -129,6 +141,12 @@ const Home = () => {
     router.push(`/coffee/${id}`);
   };
 
+  const handleClearSearch = () => {
+    clearSearch();
+    // Optionally reset to current category results
+    getCoffeesByCategory(selectedCategory);
+  };
+
   const renderCategory = useCallback(
     ({ item }: { item: string }) => (
       <CategoryItem
@@ -139,8 +157,6 @@ const Home = () => {
     ),
     [selectedCategory],
   );
-
- 
 
   return (
     <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
@@ -173,7 +189,24 @@ const Home = () => {
                   keyboardType="default"
                   placeholderTextColor={Colors.grey_light}
                   style={styles.input_field}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  returnKeyType="search"
+                  autoCorrect={false}
+                  autoCapitalize="none"
                 />
+                {isSearchActive && (
+                  <AnimatedPressable
+                    onPress={handleClearSearch}
+                    style={styles.clear_search_button}
+                  >
+                    <Ionicons
+                      name="close-circle"
+                      size={18}
+                      color={Colors.grey_light}
+                    />
+                  </AnimatedPressable>
+                )}
               </View>
               <AnimatedPressable style={styles.filter_button}>
                 <Ionicons name="filter-outline" size={20} color={"white"} />
@@ -204,46 +237,61 @@ const Home = () => {
 
       <Spacer height={24} style={{ marginTop: -56 }} />
 
-      <FadeInView>
-        <FlatList
-          data={categories}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderCategory}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.category_content}
-          style={styles.category_container}
-        />
-      </FadeInView>
-
-      <Spacer height={16} />
-
-      {loading ? (
-        <View style={styles.loading_container}>
-          <ActivityIndicator size="large" color={Colors.brown_normal} />
-        </View>
-      ) : coffees.length === 0 ? (
-        <View style={styles.empty_container}>
-          <Text style={styles.empty_text}>
-            No coffees found for this category
-          </Text>
-        </View>
+      {/* Show search results when searching, otherwise show category view */}
+      {isSearchActive ? (
+        <>
+          <SearchResults
+            searchQuery={searchQuery}
+            searchResults={searchResults}
+            isSearching={isSearching}
+            onClearSearch={handleClearSearch}
+            onCoffeePress={goToCoffeeDetail}
+          />
+        </>
       ) : (
-        <View style={styles.coffee_grid}>
-          {coffees.map((item, index) => (
-            <StaggeredItem key={item.id} index={index} staggerDelay={50}>
-              <CoffeeCard
-                id={item.id}
-                name={item.name}
-                image_url={item.image_url}
-                tags={item.tags}
-                price={item.price}
-                selectedCategory={selectedCategory}
-                handleNavigation={goToCoffeeDetail}
-              />
-            </StaggeredItem>
-          ))}
-        </View>
+        <>
+          <FadeInView>
+            <FlatList
+              data={categories}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderCategory}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.category_content}
+              style={styles.category_container}
+            />
+          </FadeInView>
+
+          <Spacer height={16} />
+
+          {loading ? (
+            <View style={styles.loading_container}>
+              <ActivityIndicator size="large" color={Colors.brown_normal} />
+            </View>
+          ) : coffees.length === 0 ? (
+            <View style={styles.empty_container}>
+              <Text style={styles.empty_text}>
+                No coffees found for this category
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.coffee_grid}>
+              {coffees.map((item, index) => (
+                <StaggeredItem key={item.id} index={index} staggerDelay={50}>
+                  <CoffeeCard
+                    id={item.id}
+                    name={item.name}
+                    image_url={item.image_url}
+                    tags={item.tags}
+                    price={item.price}
+                    selectedCategory={selectedCategory}
+                    handleNavigation={goToCoffeeDetail}
+                  />
+                </StaggeredItem>
+              ))}
+            </View>
+          )}
+        </>
       )}
       <Spacer height={100} />
     </ScrollView>
@@ -293,12 +341,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input_field: {
-    color: Colors.grey_light,
+    color: "white",
     flex: 1,
     fontFamily: fonts.regular,
     fontSize: 14,
     padding: 0,
     margin: 0,
+  },
+  clear_search_button: {
+    padding: 4,
   },
   filter_button: {
     paddingVertical: 16,
