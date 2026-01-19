@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "coffee-app",
+    "name": "ShinobiCoffee",
     "slug": "coffee-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,7 +20,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.shinobikoda.shinobicoffee"
     },
     "web": {
       "output": "static",
@@ -45,6 +46,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9e4afa42-0e17-49c1-8472-7af0250695e1"
+      }
     }
   }
 }

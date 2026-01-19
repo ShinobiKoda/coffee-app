@@ -267,12 +267,55 @@ const Order = () => {
 
           <View style={styles.divider}></View>
 
-          
+          <AnimatedPressable style={styles.discount_container}>
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={20}
+              color={Colors.brown_normal}
+            />
+            <Text style={styles.discount_text}>1 Discount Coupon Applied</Text>
+            <Ionicons
+              name="chevron-forward-outline"
+              size={20}
+              color={Colors.grey_hover}
+            />
+          </AnimatedPressable>
+
           <Spacer height={24} />
+
+          <View style={styles.price_summary_container}>
+            <Text style={styles.payment_title}>Payment Summary</Text>
+            <View style={styles.price_description_container}>
+              <View style={styles.summary_container}>
+                <Text style={styles.payment_summary_text}>Price</Text>
+                <Text style={styles.price_value}>₦ 4500</Text>
+              </View>
+              <View style={styles.summary_container}>
+                <Text style={styles.payment_summary_text}>Delivery Fee</Text>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: fonts.regular,
+                      fontSize: 14,
+                      color: Colors.grey_normal,
+                      textDecorationLine: "line-through"
+                    }}
+                  >
+                    ₦ 2000
+                  </Text>
+                  <Text style={styles.price_value}>₦ 1000</Text>
+                </View>
+              </View>
+            </View>
+          </View>
         </View>
       </ScrollView>
-
-     
     </SafeAreaViewWrapper>
   );
 };
@@ -493,5 +536,51 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-
+  discount_container: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#CCCCCC",
+    padding: 16,
+    borderRadius: 16,
+    justifyContent: "space-between",
+  },
+  discount_text: {
+    fontFamily: fonts.semibold,
+    fontSize: 14,
+    color: Colors.grey_normal,
+  },
+  price_summary_container: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+  },
+  payment_title: {
+    fontFamily: fonts.semibold,
+    fontSize: 16,
+    color: Colors.grey_normal,
+  },
+  price_description_container: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+  },
+  summary_container: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  payment_summary_text: {
+    fontFamily: fonts.regular,
+    fontSize: 14,
+    color: Colors.grey_normal,
+  },
+  price_value: {
+    fontFamily: fonts.semibold,
+    fontSize: 14,
+    color: Colors.grey_normal,
+  },
 });
