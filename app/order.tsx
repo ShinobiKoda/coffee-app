@@ -39,6 +39,23 @@ const order = () => {
             </View>
           ))}
         </View>
+
+        <Spacer height={28}/>
+        <View style={styles.delivery_container}>
+          <Text style={styles.delivery_title}>Delivery Address</Text>
+          <View style={{}}>
+            <Text style={styles.city}>JL.Kpg Sutoyo</Text>
+            <Text style={styles.address}>Kpg. Sutoyo No. 620, Bilzen, Tanjungbailai.</Text>
+          </View>
+          <View style={styles.action_btns_container}>
+            <View style={styles.action_btn}>
+              <Text style={styles.action_text}>Edit Address</Text>
+            </View>
+            <View style={styles.action_btn}>
+              <Text style={styles.action_text}>Add Note</Text>
+            </View>
+          </View>
+        </View>
       </View>
     </SafeAreaViewWrapper>
   );
@@ -85,4 +102,46 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semibold,
     color: "white",
   },
+  delivery_container:{
+    display: "flex",
+    flexDirection: "column",
+    gap: 16
+  },
+  delivery_title:{
+    fontFamily: fonts.semibold,
+    fontSize: 16,
+    color: Colors.grey_normal
+  },
+  city:{
+    fontFamily: fonts.semibold,
+    fontSize: 14,
+    color: Colors.grey_normal,
+
+  },
+  address:{
+    fontFamily: fonts.regular,
+    fontSize: 12,
+    color: Colors.grey_light
+  },
+  action_btns_container:{
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8
+  },
+  action_btn:{
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderColor: Colors.grey_light,
+    backgroundColor: "white",
+    borderRadius: 16,
+    borderWidth: 1
+  },
+
+  action_text:{
+    fontFamily: fonts.regular,
+    fontSize: 12,
+    color: Colors.grey_normal
+  }
+
 });
