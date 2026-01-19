@@ -169,7 +169,12 @@ const CoffeeDetails = () => {
           </View>
           <AnimatedPressable
             style={styles.buy_btn}
-            onPress={() => router.push("/order")}
+            onPress={() =>
+              router.push({
+                pathname: "/order",
+                params: { coffeeId: id, size: sizeSelected },
+              })
+            }
           >
             <Text style={styles.buy_btn_text}>Buy Now</Text>
           </AnimatedPressable>
