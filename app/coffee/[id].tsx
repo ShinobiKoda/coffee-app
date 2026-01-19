@@ -13,7 +13,7 @@ import { Coffee, fetchCoffeeById } from "@/lib/coffeeApi";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, StyleSheet, Text, View, ScrollView } from "react-native";
 
 const CoffeeDetails = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -66,90 +66,106 @@ const CoffeeDetails = () => {
   }
 
   return (
-    <SafeAreaViewWrapper>
-      <Navbar showBackButton={true} title="Detail" showFavoriteIcon={true} />
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <SafeAreaViewWrapper>
+        <Navbar showBackButton={true} title="Detail" showFavoriteIcon={true} />
 
-      {coffee && (
-        <View style={styles.container}>
-          <FadeSlideInView style={styles.image_container}>
-            <Image
-              source={{ uri: coffee.image_url }}
-              alt="Coffee Image"
-              resizeMode="cover"
-              style={styles.image}
-            />
-          </FadeSlideInView>
-          <Spacer height={16} />
-          <FadeInView style={styles.short_description_container}>
-            <View style={styles.name_container}>
-              <View>
-                <Text style={styles.name}>{coffee.name}</Text>
-                <Text style={styles.tags}>{formatTags(coffee.tags)}</Text>
+        {coffee && (
+          <View style={styles.container}>
+            <FadeSlideInView style={styles.image_container}>
+              <Image
+                source={{ uri: coffee.image_url }}
+                alt="Coffee Image"
+                resizeMode="cover"
+                style={styles.image}
+              />
+            </FadeSlideInView>
+            <Spacer height={16} />
+            <FadeInView style={styles.short_description_container}>
+              <View style={styles.name_container}>
+                <View>
+                  <Text style={styles.name}>{coffee.name}</Text>
+                  <Text style={styles.tags}>{formatTags(coffee.tags)}</Text>
+                </View>
+                <View style={styles.rating_container}>
+                  <Ionicons name="star" size={20} color="#FBBE21" />
+                  <Text style={styles.rating}>{coffee.rating}</Text>
+                  <Text style={styles.purchases}>({coffee.purchases})</Text>
+                </View>
               </View>
-              <View style={styles.rating_container}>
-                <Ionicons name="star" size={20} color="#FBBE21" />
-                <Text style={styles.rating}>{coffee.rating}</Text>
-                <Text style={styles.purchases}>({coffee.purchases})</Text>
-              </View>
-            </View>
 
-            <View style={styles.superiority_container}>
-              {superiority.map((icon, index) => (
-                <StaggeredItem
-                  index={index}
-                  key={index}
-                  staggerDelay={100}
-                  style={styles.superiority_icon}
-                >
-                  {icon}
-                </StaggeredItem>
-              ))}
-            </View>
-          </FadeInView>
-
-          <View style={styles.divider_line}></View>
-
-          <FadeInView style={styles.description_container}>
-            <Text style={styles.description_title}>Description</Text>
-            <Text style={styles.description_content}>{coffee.description}</Text>
-          </FadeInView>
-
-          <Spacer height={24} />
-
-          <View style={styles.sizes_container}>
-            <Text style={styles.size_title}>Size</Text>
-            <View style={styles.sizes_options_container}>
-              {sizes.map((size, index) => (
-                <StaggeredItem key={index} index={index} staggerDelay={50}>
-                  <AnimatedPressable
-                    style={[
-                      styles.size_option_btn,
-                      size === sizeSelected
-                        ? styles.size_option_btn_selected
-                        : styles.size_option_btn_unselected,
-                    ]}
-                    onPress={() => setSizeSelected(size)}
+              <View style={styles.superiority_container}>
+                {superiority.map((icon, index) => (
+                  <StaggeredItem
+                    index={index}
+                    key={index}
+                    staggerDelay={100}
+                    style={styles.superiority_icon}
                   >
-                    <Text
+                    {icon}
+                  </StaggeredItem>
+                ))}
+              </View>
+            </FadeInView>
+
+            <View style={styles.divider_line}></View>
+
+            <FadeInView style={styles.description_container}>
+              <Text style={styles.description_title}>Description</Text>
+              <Text style={styles.description_content}>
+                {coffee.description}
+              </Text>
+            </FadeInView>
+
+            <Spacer height={24} />
+
+            <View style={styles.sizes_container}>
+              <Text style={styles.size_title}>Size</Text>
+              <View style={styles.sizes_options_container}>
+                {sizes.map((size, index) => (
+                  <StaggeredItem key={index} index={index} staggerDelay={50}>
+                    <AnimatedPressable
                       style={[
-                        styles.size_option_value,
+                        styles.size_option_btn,
                         size === sizeSelected
-                          ? styles.size_option_value_selected
-                          : styles.size_option_value_unselected,
+                          ? styles.size_option_btn_selected
+                          : styles.size_option_btn_unselected,
                       ]}
+                      onPress={() => setSizeSelected(size)}
                     >
-                      {size}
-                    </Text>
-                  </AnimatedPressable>
-                </StaggeredItem>
-              ))}
+                      <Text
+                        style={[
+                          styles.size_option_value,
+                          size === sizeSelected
+                            ? styles.size_option_value_selected
+                            : styles.size_option_value_unselected,
+                        ]}
+                      >
+                        {size}
+                      </Text>
+                    </AnimatedPressable>
+                  </StaggeredItem>
+                ))}
+              </View>
             </View>
           </View>
-        </View>
-      )}
+        )}
 
-      <View></View>
-    </SafeAreaViewWrapper>
+        <Spacer height={24} />
+
+        <View style={styles.price_container}>
+          <View style={styles.price_value_container}>
+            <Text style={styles.price_title}>Price</Text>
+            <Text style={styles.price_value}>
+              {coffee && <Text>₦ {coffee.price}</Text>}
+            </Text>
+          </View>
+          <AnimatedPressable style={styles.buy_btn}>
+            <Text style={styles.buy_btn_text}>Buy Now</Text>
+          </AnimatedPressable>
+        </View>
+      </SafeAreaViewWrapper>
+    </ScrollView>
   );
 };
 
@@ -312,4 +328,47 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: Colors.grey_line,
   },
+
+  price_container: {
+    paddingHorizontal: 24,
+    backgroundColor: "white",
+    paddingTop: 16,
+    paddingBottom: 46,
+    borderTopRightRadius: 24,
+
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+
+  price_value_container: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 4
+
+  },
+  price_title: {
+    fontFamily: fonts.regular,
+    fontSize: 14,
+    color: Colors.grey_light,
+
+  },
+  price_value:{
+    fontFamily: fonts.semibold,
+    fontSize: 18,
+    color: Colors.brown_normal
+  },
+
+  buy_btn: {
+    paddingHorizontal: 60,
+    paddingVertical: 16,
+    borderRadius: 16,
+    backgroundColor: Colors.brown_normal
+  },
+  buy_btn_text:{
+    color: "white",
+    fontFamily: fonts.semibold,
+    fontSize: 16
+  }
 });
