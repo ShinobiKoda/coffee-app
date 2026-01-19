@@ -5,7 +5,7 @@ import { AnimatedPressable } from "@/components/animations/Reanimated";
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 
 const order = () => {
   const transports = ["Deliver", "Pick Up"];
@@ -53,6 +53,16 @@ const order = () => {
             </View>
             <View style={styles.action_btn}>
               <Text style={styles.action_text}>Add Note</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={{height: 1, marginVertical: 16, marginHorizontal: 4, backgroundColor: Colors.grey_line}}></View>
+
+        <View>
+          <View>
+            <View>
+              <Image />
             </View>
           </View>
         </View>

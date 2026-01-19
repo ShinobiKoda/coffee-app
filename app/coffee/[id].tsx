@@ -13,7 +13,14 @@ import { Coffee, fetchCoffeeById } from "@/lib/coffeeApi";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Image, StyleSheet, Text, View, ScrollView } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 const CoffeeDetails = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -66,10 +73,10 @@ const CoffeeDetails = () => {
   }
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <SafeAreaViewWrapper>
-        <Navbar showBackButton={true} title="Detail" showFavoriteIcon={true} />
+    <SafeAreaViewWrapper>
+      <Navbar showBackButton={true} title="Detail" showFavoriteIcon={true} />
 
+      <ScrollView showsVerticalScrollIndicator={false}>
         {coffee && (
           <View style={styles.container}>
             <FadeSlideInView style={styles.image_container}>
@@ -160,12 +167,15 @@ const CoffeeDetails = () => {
               {coffee && <Text>₦ {coffee.price}</Text>}
             </Text>
           </View>
-          <AnimatedPressable style={styles.buy_btn} onPress={()=> router.replace("/order")}>
+          <AnimatedPressable
+            style={styles.buy_btn}
+            onPress={() => router.push("/order")}
+          >
             <Text style={styles.buy_btn_text}>Buy Now</Text>
           </AnimatedPressable>
         </View>
-      </SafeAreaViewWrapper>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaViewWrapper>
   );
 };
 
@@ -339,36 +349,34 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
 
   price_value_container: {
     display: "flex",
     flexDirection: "column",
-    gap: 4
-
+    gap: 4,
   },
   price_title: {
     fontFamily: fonts.regular,
     fontSize: 14,
     color: Colors.grey_light,
-
   },
-  price_value:{
+  price_value: {
     fontFamily: fonts.semibold,
     fontSize: 18,
-    color: Colors.brown_normal
+    color: Colors.brown_normal,
   },
 
   buy_btn: {
     paddingHorizontal: 60,
     paddingVertical: 16,
     borderRadius: 16,
-    backgroundColor: Colors.brown_normal
+    backgroundColor: Colors.brown_normal,
   },
-  buy_btn_text:{
+  buy_btn_text: {
     color: "white",
     fontFamily: fonts.semibold,
-    fontSize: 16
-  }
+    fontSize: 16,
+  },
 });
