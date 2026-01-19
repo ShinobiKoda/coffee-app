@@ -28,6 +28,12 @@ const RootLayout = () => {
               headerShown: false,
             }}
           />
+           <Stack.Screen
+            name="order"
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack>
       </View>
     </FontProvider>

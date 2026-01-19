@@ -18,21 +18,32 @@ const Navbar = ({ title, showBackButton, showFavoriteIcon }: NavbarProps) => {
 
   return (
     <View style={styles.container}>
-      {showBackButton && (
-        <AnimatedPressable onPress={()=>router.back()}>
-          <Ionicons name="chevron-back-outline" size={24} />
-        </AnimatedPressable>
-      )}
-      {title && <Text style={styles.title}>{title}</Text>}
-      {showFavoriteIcon && (
-        <Pressable onPress={() => setPressed(!pressed)}>
-          <Ionicons
-            name={pressed ? "heart" : "heart-outline"}
-            size={24}
-            color={Colors.brown_normal}
-          />
-        </Pressable>
-      )}
+      {/* Left Section - fixed width */}
+      <View style={styles.leftSection}>
+        {showBackButton && (
+          <AnimatedPressable onPress={() => router.back()}>
+            <Ionicons name="chevron-back-outline" size={24} />
+          </AnimatedPressable>
+        )}
+      </View>
+
+      {/* Center Section - title always centered */}
+      <View style={styles.centerSection}>
+        {title && <Text style={styles.title}>{title}</Text>}
+      </View>
+
+      {/* Right Section - fixed width (same as left for balance) */}
+      <View style={styles.rightSection}>
+        {showFavoriteIcon && (
+          <Pressable onPress={() => setPressed(!pressed)}>
+            <Ionicons
+              name={pressed ? "heart" : "heart-outline"}
+              size={24}
+              color={Colors.brown_normal}
+            />
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 };
@@ -47,6 +58,21 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 24,
     paddingVertical: 10,
+  },
+
+  leftSection: {
+    width: 40,
+    alignItems: "flex-start",
+  },
+
+  centerSection: {
+    flex: 1,
+    alignItems: "center",
+  },
+
+  rightSection: {
+    width: 40,
+    alignItems: "flex-end",
   },
 
   title: {

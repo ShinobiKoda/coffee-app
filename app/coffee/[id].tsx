@@ -11,7 +11,7 @@ import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
 import { Coffee, fetchCoffeeById } from "@/lib/coffeeApi";
 import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, StyleSheet, Text, View, ScrollView } from "react-native";
 
@@ -160,7 +160,7 @@ const CoffeeDetails = () => {
               {coffee && <Text>₦ {coffee.price}</Text>}
             </Text>
           </View>
-          <AnimatedPressable style={styles.buy_btn}>
+          <AnimatedPressable style={styles.buy_btn} onPress={()=> router.replace("/order")}>
             <Text style={styles.buy_btn_text}>Buy Now</Text>
           </AnimatedPressable>
         </View>
