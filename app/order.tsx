@@ -29,6 +29,50 @@ interface OrderItem {
   quantity: number;
 }
 
+interface PickupLocation {
+  id: number;
+  name: string;
+  address: string;
+  distance: string;
+  waitTime: string;
+  isOpen: boolean;
+}
+
+const pickupLocations: PickupLocation[] = [
+  {
+    id: 1,
+    name: "Coffee Hub - Main Street",
+    address: "123 Main Street, Downtown",
+    distance: "0.5 km",
+    waitTime: "5-10 min",
+    isOpen: true,
+  },
+  {
+    id: 2,
+    name: "Coffee Hub - City Mall",
+    address: "City Mall, 2nd Floor",
+    distance: "1.2 km",
+    waitTime: "10-15 min",
+    isOpen: true,
+  },
+  {
+    id: 3,
+    name: "Coffee Hub - Tech Park",
+    address: "Tech Park Building A",
+    distance: "2.8 km",
+    waitTime: "15-20 min",
+    isOpen: true,
+  },
+  {
+    id: 4,
+    name: "Coffee Hub - University",
+    address: "University Campus Gate",
+    distance: "3.5 km",
+    waitTime: "20-25 min",
+    isOpen: false,
+  },
+];
+
 const Order = () => {
   const { coffeeId, size } = useLocalSearchParams<{
     coffeeId?: string;
@@ -42,6 +86,8 @@ const Order = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [location, setLocation] = useState<LocationData | null>(null);
   const [locationLoading, setLocationLoading] = useState<boolean>(true);
+  const [selectedPickupLocation, setSelectedPickupLocation] =
+    useState<number>(1);
 
   // Fetch coffee details
   useEffect(() => {
@@ -108,6 +154,13 @@ const Order = () => {
     return `${tags[0]}/${tags[1]}`;
   };
 
+  const formatCurrency = (amount: number) => {
+    return amount.toLocaleString("en-NG", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
   const calculateTotal = () => {
     if (!orderItem) return 0;
     const basePrice = orderItem.coffee.price;
@@ -160,51 +213,192 @@ const Order = () => {
 
           <Spacer height={28} />
 
-          {/* Delivery Address */}
-          <FadeSlideInView delay={100} style={styles.delivery_container}>
-            <Text style={styles.delivery_title}>
-              {transportType === "Deliver"
-                ? "Delivery Address"
-                : "Pick Up Location"}
-            </Text>
-            {locationLoading ? (
-              <View style={styles.location_loading}>
-                <ActivityIndicator size="small" color={Colors.brown_normal} />
-                <Text style={styles.location_loading_text}>
-                  Getting your location...
-                </Text>
+          {/* Delivery Address - shown when Deliver is selected */}
+          {transportType === "Deliver" ? (
+            <FadeSlideInView delay={100} style={styles.delivery_container}>
+              <Text style={styles.delivery_title}>Delivery Address</Text>
+              {locationLoading ? (
+                <View style={styles.location_loading}>
+                  <ActivityIndicator size="small" color={Colors.brown_normal} />
+                  <Text style={styles.location_loading_text}>
+                    Getting your location...
+                  </Text>
+                </View>
+              ) : location ? (
+                <FadeInView style={styles.address_details}>
+                  <Text style={styles.city}>
+                    {location.city || "Your City"}
+                  </Text>
+                  <Text style={styles.address}>
+                    {location.formattedAddress}
+                  </Text>
+                </FadeInView>
+              ) : (
+                <Text style={styles.address}>Unable to get location</Text>
+              )}
+              <View style={styles.action_btns_container}>
+                <StaggeredItem index={0} staggerDelay={100}>
+                  <AnimatedPressable style={styles.action_btn}>
+                    <Ionicons
+                      name="pencil-outline"
+                      size={14}
+                      color={Colors.grey_normal}
+                    />
+                    <Text style={styles.action_text}>Edit Address</Text>
+                  </AnimatedPressable>
+                </StaggeredItem>
+                <StaggeredItem index={1} staggerDelay={100}>
+                  <AnimatedPressable style={styles.action_btn}>
+                    <Ionicons
+                      name="document-text-outline"
+                      size={14}
+                      color={Colors.grey_normal}
+                    />
+                    <Text style={styles.action_text}>Add Note</Text>
+                  </AnimatedPressable>
+                </StaggeredItem>
               </View>
-            ) : location ? (
-              <FadeInView style={styles.address_details}>
-                <Text style={styles.city}>{location.city || "Your City"}</Text>
-                <Text style={styles.address}>{location.formattedAddress}</Text>
-              </FadeInView>
-            ) : (
-              <Text style={styles.address}>Unable to get location</Text>
-            )}
-            <View style={styles.action_btns_container}>
-              <StaggeredItem index={0} staggerDelay={100}>
-                <AnimatedPressable style={styles.action_btn}>
+            </FadeSlideInView>
+          ) : (
+            /* Pickup Locations - shown when Pick Up is selected */
+            <FadeSlideInView delay={100} style={styles.pickup_container}>
+              <View style={styles.pickup_header}>
+                <Text style={styles.delivery_title}>
+                  Select Pickup Location
+                </Text>
+                <View style={styles.pickup_badge}>
                   <Ionicons
-                    name="pencil-outline"
-                    size={14}
-                    color={Colors.grey_normal}
+                    name="location"
+                    size={12}
+                    color={Colors.brown_normal}
                   />
-                  <Text style={styles.action_text}>Edit Address</Text>
-                </AnimatedPressable>
-              </StaggeredItem>
-              <StaggeredItem index={1} staggerDelay={100}>
-                <AnimatedPressable style={styles.action_btn}>
-                  <Ionicons
-                    name="document-text-outline"
-                    size={14}
-                    color={Colors.grey_normal}
-                  />
-                  <Text style={styles.action_text}>Add Note</Text>
-                </AnimatedPressable>
-              </StaggeredItem>
-            </View>
-          </FadeSlideInView>
+                  <Text style={styles.pickup_badge_text}>
+                    {pickupLocations.filter((l) => l.isOpen).length} stores
+                    nearby
+                  </Text>
+                </View>
+              </View>
+
+              <Spacer height={16} />
+
+              <View style={styles.pickup_list}>
+                {pickupLocations.map((loc, index) => (
+                  <StaggeredItem key={loc.id} index={index} staggerDelay={80}>
+                    <AnimatedPressable
+                      style={[
+                        styles.pickup_card,
+                        selectedPickupLocation === loc.id &&
+                          styles.pickup_card_selected,
+                        !loc.isOpen && styles.pickup_card_closed,
+                      ]}
+                      onPress={() =>
+                        loc.isOpen && setSelectedPickupLocation(loc.id)
+                      }
+                    >
+                      <View style={styles.pickup_card_left}>
+                        <View
+                          style={[
+                            styles.pickup_radio,
+                            selectedPickupLocation === loc.id &&
+                              styles.pickup_radio_selected,
+                          ]}
+                        >
+                          {selectedPickupLocation === loc.id && (
+                            <View style={styles.pickup_radio_inner} />
+                          )}
+                        </View>
+                        <View style={styles.pickup_info}>
+                          <View style={styles.pickup_name_row}>
+                            <Text
+                              style={[
+                                styles.pickup_name,
+                                !loc.isOpen && styles.pickup_text_closed,
+                              ]}
+                            >
+                              {loc.name}
+                            </Text>
+                            {!loc.isOpen && (
+                              <View style={styles.closed_badge}>
+                                <Text style={styles.closed_badge_text}>
+                                  Closed
+                                </Text>
+                              </View>
+                            )}
+                          </View>
+                          <Text
+                            style={[
+                              styles.pickup_address,
+                              !loc.isOpen && styles.pickup_text_closed,
+                            ]}
+                          >
+                            {loc.address}
+                          </Text>
+                          <View style={styles.pickup_meta}>
+                            <View style={styles.pickup_meta_item}>
+                              <Ionicons
+                                name="navigate-outline"
+                                size={12}
+                                color={
+                                  loc.isOpen
+                                    ? Colors.brown_normal
+                                    : Colors.grey_light
+                                }
+                              />
+                              <Text
+                                style={[
+                                  styles.pickup_meta_text,
+                                  !loc.isOpen && styles.pickup_text_closed,
+                                ]}
+                              >
+                                {loc.distance}
+                              </Text>
+                            </View>
+                            <View style={styles.pickup_meta_item}>
+                              <Ionicons
+                                name="time-outline"
+                                size={12}
+                                color={
+                                  loc.isOpen
+                                    ? Colors.brown_normal
+                                    : Colors.grey_light
+                                }
+                              />
+                              <Text
+                                style={[
+                                  styles.pickup_meta_text,
+                                  !loc.isOpen && styles.pickup_text_closed,
+                                ]}
+                              >
+                                {loc.waitTime}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                      </View>
+                      <Ionicons
+                        name="chevron-forward"
+                        size={18}
+                        color={
+                          loc.isOpen ? Colors.grey_light : Colors.grey_line
+                        }
+                      />
+                    </AnimatedPressable>
+                  </StaggeredItem>
+                ))}
+              </View>
+
+              <Spacer height={12} />
+
+              <AnimatedPressable style={styles.view_map_btn}>
+                <Ionicons
+                  name="map-outline"
+                  size={16}
+                  color={Colors.brown_normal}
+                />
+                <Text style={styles.view_map_text}>View on Map</Text>
+              </AnimatedPressable>
+            </FadeSlideInView>
+          )}
 
           <View style={styles.divider}></View>
 
@@ -304,7 +498,7 @@ const Order = () => {
                       fontFamily: fonts.regular,
                       fontSize: 14,
                       color: Colors.grey_normal,
-                      textDecorationLine: "line-through"
+                      textDecorationLine: "line-through",
                     }}
                   >
                     ₦ 2000
@@ -313,6 +507,29 @@ const Order = () => {
                 </View>
               </View>
             </View>
+          </View>
+        </View>
+
+        <Spacer height={32} />
+
+        <View style={styles.wallet_container}>
+          <View style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <View style={styles.wallet_value_container}>
+              <Ionicons
+                name="wallet-outline"
+                color={Colors.brown_normal}
+                size={20}
+              />
+              <View>
+                <Text style={styles.wallet_title}>Cash/Wallet</Text>
+                <Text style={styles.wallet_value}>
+                  ₦ {formatCurrency(50000000)}
+                </Text>
+              </View>
+            </View>
+            <AnimatedPressable style={styles.wallet_btn}>
+              <Text style={styles.order_text}>Order</Text>
+            </AnimatedPressable>
           </View>
         </View>
       </ScrollView>
@@ -582,5 +799,200 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semibold,
     fontSize: 14,
     color: Colors.grey_normal,
+  },
+  wallet_container: {
+    backgroundColor: "white",
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 46,
+    borderRadius: 16,
+  },
+  wallet_value_container: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 9.5,
+  },
+  wallet_title: {
+    fontFamily: fonts.semibold,
+    fontSize: 14,
+    color: Colors.grey_normal,
+  },
+  wallet_value: {
+    fontFamily: fonts.semibold,
+    fontSize: 12,
+    color: Colors.brown_normal,
+  },
+  wallet_btn: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: Colors.brown_normal,
+    borderRadius: 16,
+  },
+  order_text: {
+    color: "white",
+    textAlign: "center",
+    fontFamily: fonts.semibold,
+    fontSize: 16,
+  },
+
+  // Pickup Location Styles
+  pickup_container: {
+    display: "flex",
+    flexDirection: "column",
+  },
+
+  pickup_header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  pickup_badge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: Colors.brown_light,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+
+  pickup_badge_text: {
+    fontFamily: fonts.regular,
+    fontSize: 11,
+    color: Colors.brown_normal,
+  },
+
+  pickup_list: {
+    gap: 12,
+  },
+
+  pickup_card: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1.5,
+    borderColor: Colors.grey_line,
+  },
+
+  pickup_card_selected: {
+    borderColor: Colors.brown_normal,
+    backgroundColor: Colors.brown_light,
+  },
+
+  pickup_card_closed: {
+    opacity: 0.6,
+    backgroundColor: "#F5F5F5",
+  },
+
+  pickup_card_left: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+    flex: 1,
+  },
+
+  pickup_radio: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: Colors.grey_line,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 2,
+  },
+
+  pickup_radio_selected: {
+    borderColor: Colors.brown_normal,
+  },
+
+  pickup_radio_inner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: Colors.brown_normal,
+  },
+
+  pickup_info: {
+    flex: 1,
+    gap: 4,
+  },
+
+  pickup_name_row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  pickup_name: {
+    fontFamily: fonts.semibold,
+    fontSize: 14,
+    color: Colors.grey_normal,
+    flex: 1,
+  },
+
+  pickup_address: {
+    fontFamily: fonts.regular,
+    fontSize: 12,
+    color: Colors.grey_light,
+  },
+
+  pickup_meta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    marginTop: 6,
+  },
+
+  pickup_meta_item: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+
+  pickup_meta_text: {
+    fontFamily: fonts.regular,
+    fontSize: 11,
+    color: Colors.grey_normal,
+  },
+
+  pickup_text_closed: {
+    color: Colors.grey_light,
+  },
+
+  closed_badge: {
+    backgroundColor: Colors.promo_red,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+
+  closed_badge_text: {
+    fontFamily: fonts.semibold,
+    fontSize: 9,
+    color: "white",
+  },
+
+  view_map_btn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.brown_normal,
+    backgroundColor: "white",
+  },
+
+  view_map_text: {
+    fontFamily: fonts.semibold,
+    fontSize: 14,
+    color: Colors.brown_normal,
   },
 });
