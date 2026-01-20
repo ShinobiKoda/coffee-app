@@ -220,7 +220,7 @@ const Cart = () => {
               <FadeSlideInView delay={300}>
                 <AnimatedPressable
                   style={styles.checkout_btn}
-                  onPress={() => router.push("/order")}
+                  onPress={() => router.push("/checkout")}
                 >
                   <Text style={styles.checkout_text}>Proceed to Checkout</Text>
                   <Ionicons name="arrow-forward" size={20} color="white" />
