@@ -1,4 +1,6 @@
 import BlurredStatusBar from "@/components/BlurredStatusBar";
+import { CartProvider } from "@/providers/CartProvider";
+import { FavoritesProvider } from "@/providers/FavoritesProvider";
 import { FontProvider } from "@/providers/FontProviders";
 import { Stack } from "expo-router";
 import React from "react";
@@ -7,35 +9,39 @@ import { View } from "react-native";
 const RootLayout = () => {
   return (
     <FontProvider>
-      <View style={{ flex: 1 }}>
-        <BlurredStatusBar />
-        <Stack>
-          <Stack.Screen
-            name="index"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="dashboard"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="coffee/[id]"
-            options={{
-              headerShown: false,
-            }}
-          />
-           <Stack.Screen
-            name="order"
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Stack>
-      </View>
+      <CartProvider>
+        <FavoritesProvider>
+          <View style={{ flex: 1 }}>
+            <BlurredStatusBar />
+            <Stack>
+              <Stack.Screen
+                name="index"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="dashboard"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="coffee/[id]"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="order"
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Stack>
+          </View>
+        </FavoritesProvider>
+      </CartProvider>
     </FontProvider>
   );
 };

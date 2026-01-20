@@ -1,5 +1,7 @@
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
+import { Coffee } from "@/lib/coffeeApi";
+import { useCart } from "@/providers/CartProvider";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -11,6 +13,9 @@ interface CoffeCardProps {
   name: string;
   tags: string[];
   price: number;
+  description?: string;
+  purchases?: number;
+  rating?: number;
   selectedCategory?: string;
   handleNavigation?: (id: number) => void;
 }
@@ -46,9 +51,30 @@ const CoffeeCard = ({
   name,
   tags,
   price,
+  description = "",
+  purchases = 0,
+  rating = 0,
   selectedCategory,
   handleNavigation,
 }: CoffeCardProps) => {
+  const { addToCart, isInCart } = useCart();
+
+  const handleAddToCart = () => {
+    const coffee: Coffee = {
+      id,
+      name,
+      image_url,
+      tags,
+      price,
+      description,
+      purchases,
+      rating,
+    };
+    addToCart(coffee, "M", 1);
+  };
+
+  const inCart = isInCart(id);
+
   return (
     <View style={styles.container}>
       <AnimatedPressable onPress={() => handleNavigation?.(id)}>
@@ -67,8 +93,15 @@ const CoffeeCard = ({
       </View>
       <View style={styles.cart}>
         <Text style={styles.price}>₦ {price}</Text>
-        <AnimatedPressable style={styles.add_to_cart_btn}>
-          <Ionicons name="add" size={20} color="white" />
+        <AnimatedPressable
+          style={[styles.add_to_cart_btn, inCart && styles.in_cart_btn]}
+          onPress={handleAddToCart}
+        >
+          <Ionicons
+            name={inCart ? "checkmark" : "add"}
+            size={20}
+            color="white"
+          />
         </AnimatedPressable>
       </View>
     </View>
@@ -141,5 +174,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  in_cart_btn: {
+    backgroundColor: "#4CAF50",
   },
 });

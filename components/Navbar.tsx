@@ -1,8 +1,10 @@
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
+import { Coffee } from "@/lib/coffeeApi";
+import { useFavorites } from "@/providers/FavoritesProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { AnimatedPressable } from "./animations/Reanimated";
 
@@ -10,11 +12,25 @@ interface NavbarProps {
   title?: string;
   showBackButton?: boolean;
   showFavoriteIcon?: boolean;
+  coffee?: Coffee | null;
 }
 
-const Navbar = ({ title, showBackButton, showFavoriteIcon }: NavbarProps) => {
+const Navbar = ({
+  title,
+  showBackButton,
+  showFavoriteIcon,
+  coffee,
+}: NavbarProps) => {
   const router = useRouter();
-  const [pressed, setPressed] = useState<boolean>(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
+
+  const isCurrentFavorite = coffee ? isFavorite(coffee.id) : false;
+
+  const handleFavoritePress = () => {
+    if (coffee) {
+      toggleFavorite(coffee);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -35,9 +51,9 @@ const Navbar = ({ title, showBackButton, showFavoriteIcon }: NavbarProps) => {
       {/* Right Section - fixed width (same as left for balance) */}
       <View style={styles.rightSection}>
         {showFavoriteIcon && (
-          <Pressable onPress={() => setPressed(!pressed)}>
+          <Pressable onPress={handleFavoritePress}>
             <Ionicons
-              name={pressed ? "heart" : "heart-outline"}
+              name={isCurrentFavorite ? "heart" : "heart-outline"}
               size={24}
               color={Colors.brown_normal}
             />

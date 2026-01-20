@@ -11,8 +11,9 @@ import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
 import { Coffee, fetchCoffeeById } from "@/lib/coffeeApi";
 import { getCurrentLocation, LocationData } from "@/lib/locationApi";
+import { useCart } from "@/providers/CartProvider";
 import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -74,6 +75,8 @@ const pickupLocations: PickupLocation[] = [
 ];
 
 const Order = () => {
+  const router = useRouter();
+  const { addToCart } = useCart();
   const { coffeeId, size } = useLocalSearchParams<{
     coffeeId?: string;
     size?: string;
@@ -527,7 +530,19 @@ const Order = () => {
                 </Text>
               </View>
             </View>
-            <AnimatedPressable style={styles.wallet_btn}>
+            <AnimatedPressable
+              style={styles.wallet_btn}
+              onPress={() => {
+                if (orderItem) {
+                  addToCart(
+                    orderItem.coffee,
+                    orderItem.size,
+                    orderItem.quantity,
+                  );
+                  router.push("/dashboard/Cart");
+                }
+              }}
+            >
               <Text style={styles.order_text}>Order</Text>
             </AnimatedPressable>
           </View>

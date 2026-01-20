@@ -284,6 +284,9 @@ const Home = () => {
                     image_url={item.image_url}
                     tags={item.tags}
                     price={item.price}
+                    description={item.description}
+                    purchases={item.purchases}
+                    rating={item.rating}
                     selectedCategory={selectedCategory}
                     handleNavigation={goToCoffeeDetail}
                   />

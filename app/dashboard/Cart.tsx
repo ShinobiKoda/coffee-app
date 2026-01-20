@@ -9,75 +9,16 @@ import SafeAreaViewWrapper from "@/components/SafeAreaViewWrapper";
 import Spacer from "@/components/Spacer";
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
-import { Coffee, fetchAllCoffees } from "@/lib/coffeeApi";
+import { useCart } from "@/providers/CartProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-
-interface CartItem {
-  coffee: Coffee;
-  size: string;
-  quantity: number;
-}
+import React from "react";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const Cart = () => {
   const router = useRouter();
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  // Mock cart items from coffees
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      setLoading(true);
-      const { data, error } = await fetchAllCoffees();
-      if (data) {
-        // Take first 3 items as mock cart items
-        const mockCart: CartItem[] = data
-          .slice(0, 3)
-          .map((coffee: Coffee, index: number) => ({
-            coffee,
-            size: ["S", "M", "L"][index % 3],
-            quantity: index + 1,
-          }));
-        setCartItems(mockCart);
-      } else {
-        console.log("Error fetching cart:", error);
-      }
-      setLoading(false);
-    };
-
-    fetchCartItems();
-  }, []);
-
-  const incrementQuantity = (id: number) => {
-    setCartItems(
-      cartItems.map((item) =>
-        item.coffee.id === id ? { ...item, quantity: item.quantity + 1 } : item,
-      ),
-    );
-  };
-
-  const decrementQuantity = (id: number) => {
-    setCartItems(
-      cartItems.map((item) =>
-        item.coffee.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item,
-      ),
-    );
-  };
-
-  const removeItem = (id: number) => {
-    setCartItems(cartItems.filter((item) => item.coffee.id !== id));
-  };
+  const { cartItems, removeFromCart, incrementQuantity, decrementQuantity } =
+    useCart();
 
   const formatTags = (tags: string[]) => {
     if (!tags || tags.length === 0) return "";
@@ -92,7 +33,11 @@ const Cart = () => {
     });
   };
 
-  const calculateItemPrice = (item: CartItem) => {
+  const calculateItemPrice = (item: {
+    coffee: { price: number };
+    size: string;
+    quantity: number;
+  }) => {
     const sizeMultiplier =
       item.size === "S" ? 0.8 : item.size === "L" ? 1.2 : 1;
     return item.coffee.price * sizeMultiplier * item.quantity;
@@ -111,18 +56,6 @@ const Cart = () => {
   const calculateTotal = () => {
     return calculateSubtotal() + deliveryFee - discount;
   };
-
-  if (loading) {
-    return (
-      <SafeAreaViewWrapper>
-        <Navbar title="Cart" />
-        <View style={styles.loading_container}>
-          <ActivityIndicator size="large" color={Colors.brown_normal} />
-          <Text style={styles.loading_text}>Loading cart...</Text>
-        </View>
-      </SafeAreaViewWrapper>
-    );
-  }
 
   return (
     <SafeAreaViewWrapper>
@@ -187,7 +120,7 @@ const Cart = () => {
                             </Text>
                             <AnimatedPressable
                               style={styles.remove_btn}
-                              onPress={() => removeItem(item.coffee.id)}
+                              onPress={() => removeFromCart(item.coffee.id)}
                             >
                               <Ionicons
                                 name="trash-outline"

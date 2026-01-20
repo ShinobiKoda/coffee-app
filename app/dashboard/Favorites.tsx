@@ -9,51 +9,15 @@ import SafeAreaViewWrapper from "@/components/SafeAreaViewWrapper";
 import Spacer from "@/components/Spacer";
 import { Colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
-import { Coffee, fetchTopRatedCoffees } from "@/lib/coffeeApi";
+import { useFavorites } from "@/providers/FavoritesProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-
-interface FavoriteItem extends Coffee {
-  addedAt: Date;
-}
+import React from "react";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const Favorites = () => {
   const router = useRouter();
-  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  // Fetch top rated coffees as mock favorites
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      setLoading(true);
-      const { data, error } = await fetchTopRatedCoffees(6);
-      if (data) {
-        const favoritesWithDate = data.map((coffee: Coffee) => ({
-          ...coffee,
-          addedAt: new Date(),
-        }));
-        setFavorites(favoritesWithDate);
-      } else {
-        console.log("Error fetching favorites:", error);
-      }
-      setLoading(false);
-    };
-
-    fetchFavorites();
-  }, []);
-
-  const removeFavorite = (id: number) => {
-    setFavorites(favorites.filter((item) => item.id !== id));
-  };
+  const { favorites, removeFromFavorites } = useFavorites();
 
   const goToCoffeeDetail = (id: number) => {
     router.push(`/coffee/${id}`);
@@ -64,18 +28,6 @@ const Favorites = () => {
     if (tags.length === 1) return tags[0];
     return `${tags[0]}/${tags[1]}`;
   };
-
-  if (loading) {
-    return (
-      <SafeAreaViewWrapper>
-        <Navbar title="Favorites" />
-        <View style={styles.loading_container}>
-          <ActivityIndicator size="large" color={Colors.brown_normal} />
-          <Text style={styles.loading_text}>Loading favorites...</Text>
-        </View>
-      </SafeAreaViewWrapper>
-    );
-  }
 
   return (
     <SafeAreaViewWrapper>
@@ -153,7 +105,7 @@ const Favorites = () => {
                         </Text>
                         <AnimatedPressable
                           style={styles.remove_btn}
-                          onPress={() => removeFavorite(item.id)}
+                          onPress={() => removeFromFavorites(item.id)}
                         >
                           <Ionicons
                             name="heart"

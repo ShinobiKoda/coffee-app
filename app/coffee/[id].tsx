@@ -64,7 +64,7 @@ const CoffeeDetails = () => {
   if (loading) {
     return (
       <SafeAreaViewWrapper>
-        <Navbar showBackButton={true} title="Detail" showFavoriteIcon={true} />
+        <Navbar showBackButton={true} title="Detail" showFavoriteIcon={false} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.brown_normal} />
         </View>
@@ -74,7 +74,12 @@ const CoffeeDetails = () => {
 
   return (
     <SafeAreaViewWrapper>
-      <Navbar showBackButton={true} title="Detail" showFavoriteIcon={true} />
+      <Navbar
+        showBackButton={true}
+        title="Detail"
+        showFavoriteIcon={true}
+        coffee={coffee}
+      />
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {coffee && (
