@@ -38,6 +38,12 @@ const RootLayout = () => {
                   headerShown: false,
                 }}
               />
+               <Stack.Screen
+                name="checkout"
+                options={{
+                  headerShown: false,
+                }}
+              />
             </Stack>
           </View>
         </FavoritesProvider>

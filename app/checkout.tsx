@@ -16,12 +16,19 @@ import React, { useState } from "react";
 import {
   Alert,
   Image,
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  ZoomIn,
+  ZoomOut,
+} from "react-native-reanimated";
 
 type PaymentMethod = "wallet" | "card" | "cash";
 
@@ -33,6 +40,7 @@ const Checkout = () => {
     useState<PaymentMethod>("wallet");
   const [promoCode, setPromoCode] = useState<string>("");
   const [promoApplied, setPromoApplied] = useState<boolean>(false);
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
 
   const formatCurrency = (amount: number) => {
     return amount.toLocaleString("en-NG", {
@@ -89,19 +97,13 @@ const Checkout = () => {
   };
 
   const handlePlaceOrder = () => {
-    Alert.alert(
-      "Order Placed!",
-      "Your order has been placed successfully. Thank you for your purchase!",
-      [
-        {
-          text: "OK",
-          onPress: () => {
-            clearCart();
-            router.push("/dashboard/Home");
-          },
-        },
-      ],
-    );
+    setShowSuccessModal(true);
+  };
+
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false);
+    clearCart();
+    router.push("/dashboard/Home");
   };
 
   if (cartItems.length === 0) {
@@ -328,6 +330,7 @@ const Checkout = () => {
             <Text style={styles.footer_label}>Total Payment</Text>
             <Text style={styles.footer_total}>₦ {formatCurrency(total)}</Text>
           </View>
+          <Spacer height={16} />
           <AnimatedPressable
             style={styles.place_order_btn}
             onPress={handlePlaceOrder}
@@ -339,6 +342,48 @@ const Checkout = () => {
 
         <Spacer height={40} />
       </ScrollView>
+
+      {/* Success Modal */}
+      <Modal
+        visible={showSuccessModal}
+        transparent={true}
+        animationType="none"
+        onRequestClose={handleSuccessClose}
+      >
+        <Animated.View
+          entering={FadeIn.duration(200)}
+          exiting={FadeOut.duration(200)}
+          style={styles.modal_overlay}
+        >
+          <Animated.View
+            entering={ZoomIn.duration(300).springify()}
+            exiting={ZoomOut.duration(200)}
+            style={styles.modal_content}
+          >
+            <View style={styles.success_icon_container}>
+              <Ionicons name="checkmark-circle" size={64} color="#4CAF50" />
+            </View>
+            <Spacer height={20} />
+            <Text style={styles.modal_title}>Order Placed!</Text>
+            <Spacer height={8} />
+            <Text style={styles.modal_message}>
+              Your order has been placed successfully. Thank you for your
+              purchase!
+            </Text>
+            <Spacer height={8} />
+            <Text style={styles.modal_order_id}>
+              Order ID: #CF{Date.now().toString().slice(-6)}
+            </Text>
+            <Spacer height={24} />
+            <AnimatedPressable
+              style={styles.modal_btn}
+              onPress={handleSuccessClose}
+            >
+              <Text style={styles.modal_btn_text}>Continue Shopping</Text>
+            </AnimatedPressable>
+          </Animated.View>
+        </Animated.View>
+      </Modal>
     </SafeAreaViewWrapper>
   );
 };
@@ -630,15 +675,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     borderRadius: 16,
     padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: Colors.grey_line,
   },
 
   footer_info: {
-    gap: 2,
+    alignItems: "center",
   },
 
   footer_label: {
@@ -657,6 +699,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.brown_normal,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 24,
     paddingVertical: 14,
     borderRadius: 12,
@@ -666,6 +709,68 @@ const styles = StyleSheet.create({
   place_order_text: {
     fontFamily: fonts.semibold,
     fontSize: 16,
+    color: "white",
+  },
+
+  modal_overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+
+  modal_content: {
+    backgroundColor: "white",
+    borderRadius: 24,
+    padding: 32,
+    alignItems: "center",
+    width: "100%",
+    maxWidth: 340,
+  },
+
+  success_icon_container: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "#E8F5E9",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  modal_title: {
+    fontFamily: fonts.semibold,
+    fontSize: 24,
+    color: Colors.grey_normal,
+    textAlign: "center",
+  },
+
+  modal_message: {
+    fontFamily: fonts.regular,
+    fontSize: 14,
+    color: Colors.grey_light,
+    textAlign: "center",
+    lineHeight: 22,
+  },
+
+  modal_order_id: {
+    fontFamily: fonts.semibold,
+    fontSize: 14,
+    color: Colors.brown_normal,
+  },
+
+  modal_btn: {
+    backgroundColor: Colors.brown_normal,
+    paddingHorizontal: 32,
+    paddingVertical: 14,
+    borderRadius: 12,
+    width: "100%",
+    alignItems: "center",
+  },
+
+  modal_btn_text: {
+    fontFamily: fonts.semibold,
+    fontSize: 14,
     color: "white",
   },
 });

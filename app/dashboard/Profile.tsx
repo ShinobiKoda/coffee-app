@@ -57,22 +57,11 @@ const Profile = () => {
       label: "Payment Methods",
       hasChevron: true,
     },
-    {
-      id: "address",
-      icon: "location-outline",
-      label: "Delivery Address",
-      hasChevron: true,
-    },
+   
     {
       id: "notifications",
       icon: "notifications-outline",
       label: "Notifications",
-      hasToggle: true,
-    },
-    {
-      id: "darkmode",
-      icon: "moon-outline",
-      label: "Dark Mode",
       hasToggle: true,
     },
     {
@@ -111,7 +100,7 @@ const Profile = () => {
             <View style={styles.avatar_container}>
               <Image
                 source={{
-                  uri: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
+                  uri: "https://avatars.githubusercontent.com/u/145020092?v=4",
                 }}
                 style={styles.avatar}
               />
@@ -119,8 +108,8 @@ const Profile = () => {
                 <Ionicons name="camera" size={14} color="white" />
               </AnimatedPressable>
             </View>
-            <Text style={styles.profile_name}>John Doe</Text>
-            <Text style={styles.profile_email}>johndoe@email.com</Text>
+            <Text style={styles.profile_name}>Gojo Satoru</Text>
+            <Text style={styles.profile_email}>ichimoji@email.com</Text>
           </FadeInView>
 
           <Spacer height={24} />
@@ -233,17 +222,7 @@ const Profile = () => {
           <Spacer height={24} />
 
           {/* Logout Button */}
-          <FadeSlideInView delay={300}>
-            <AnimatedPressable style={styles.logout_btn}>
-              <Ionicons
-                name="log-out-outline"
-                size={20}
-                color={Colors.promo_red}
-              />
-              <Text style={styles.logout_text}>Log Out</Text>
-            </AnimatedPressable>
-          </FadeSlideInView>
-
+      
           <Spacer height={16} />
 
           {/* App Version */}

@@ -136,43 +136,39 @@ const Cart = () => {
                             <Text style={styles.cart_price}>
                               ₦ {formatCurrency(calculateItemPrice(item))}
                             </Text>
-                            <View style={styles.quantity_controls}>
-                              <AnimatedPressable
-                                style={[
-                                  styles.quantity_btn,
-                                  item.quantity <= 1 &&
-                                    styles.quantity_btn_disabled,
-                                ]}
-                                onPress={() =>
-                                  decrementQuantity(item.coffee.id)
+                          </View>
+                          <View style={styles.quantity_controls}>
+                            <AnimatedPressable
+                              style={[
+                                styles.quantity_btn,
+                                item.quantity <= 1 &&
+                                  styles.quantity_btn_disabled,
+                              ]}
+                              onPress={() => decrementQuantity(item.coffee.id)}
+                            >
+                              <Ionicons
+                                name="remove"
+                                size={16}
+                                color={
+                                  item.quantity <= 1
+                                    ? Colors.grey_line
+                                    : Colors.grey_normal
                                 }
-                              >
-                                <Ionicons
-                                  name="remove"
-                                  size={16}
-                                  color={
-                                    item.quantity <= 1
-                                      ? Colors.grey_line
-                                      : Colors.grey_normal
-                                  }
-                                />
-                              </AnimatedPressable>
-                              <Text style={styles.quantity_text}>
-                                {item.quantity}
-                              </Text>
-                              <AnimatedPressable
-                                style={styles.quantity_btn}
-                                onPress={() =>
-                                  incrementQuantity(item.coffee.id)
-                                }
-                              >
-                                <Ionicons
-                                  name="add"
-                                  size={16}
-                                  color={Colors.grey_normal}
-                                />
-                              </AnimatedPressable>
-                            </View>
+                              />
+                            </AnimatedPressable>
+                            <Text style={styles.quantity_text}>
+                              {item.quantity}
+                            </Text>
+                            <AnimatedPressable
+                              style={styles.quantity_btn}
+                              onPress={() => incrementQuantity(item.coffee.id)}
+                            >
+                              <Ionicons
+                                name="add"
+                                size={16}
+                                color={Colors.grey_normal}
+                              />
+                            </AnimatedPressable>
                           </View>
                         </View>
                       </View>
@@ -374,9 +370,6 @@ const styles = StyleSheet.create({
   },
 
   cart_footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     marginTop: 12,
   },
 
@@ -390,6 +383,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    marginTop: 10,
   },
 
   quantity_btn: {
